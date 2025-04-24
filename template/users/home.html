@@ -2,5 +2,7 @@
 
 {%block content%}
 <h1>Hello User</h1>
-
+    {%for user in users%}
+        <h2>{{user.username}} - {{user.user_type}}</h2>
+    {%endfor%}
 {%endblock%}

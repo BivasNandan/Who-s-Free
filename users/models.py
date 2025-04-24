@@ -21,7 +21,7 @@ class CustomUser(AbstractUser):
     # Fields specific to businesses
     company_name = models.CharField(max_length=255, blank=True, null=True)
     business_address = models.TextField(blank=True, null=True)
-    webseite = models.URLField(blank=True, null=True)
+    website = models.URLField(blank=True, null=True)
 
     # Fields specific to individuals
     location = models.CharField(max_length=255, blank=True, null=True)

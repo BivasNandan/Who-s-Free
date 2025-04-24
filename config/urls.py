@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls.static import static
+from . import settings
 from users import views as u_views
 from events import views as e_views
 from chat import views as c_views
@@ -25,4 +27,4 @@ urlpatterns = [
     path('', u_views.home),
     path('events/', e_views.home),
     path('chat/', c_views.home),
-]
+] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
