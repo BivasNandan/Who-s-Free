@@ -1,0 +1,57 @@
+{%extends 'base.html' %}
+{% load static %}
+
+{%block content%}
+<main class="signup-page">
+  <h1>Create Your Account</h1>
+  <form class="signup-form" method="post">
+    {% csrf_token %}
+        {{ form.first_name.label_tag }}
+        {{ form.first_name }}
+
+        {{ form.last_name.label_tag }}
+        {{ form.last_name }}
+
+        {{ form.username.label_tag }}
+        {{ form.username }}
+
+        {% if form.username.errors %}
+        <ul class="errorlist">
+          {% for error in form.username.errors %}
+            <li style="color: red;">{{ error }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+        {{ form.email.label_tag }}
+        {{ form.email }}
+
+        {% if form.email.errors %}
+          <ul class="errorlist">
+            {% for error in form.email.errors %}
+              <li style="color: red;">{{ error }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        {{ form.password1.label_tag }}
+        {{ form.password1 }}
+
+        {{ form.password2.label_tag }}
+        {{ form.password2 }}
+
+        <div style="background-color: #fff; margin: 8px 0; padding: 2px; border: 1px solid #ccc; border-radius: 5px;">
+          {% for radio in form.user_type %}
+              <label style="margin-right: 15px; font-weight: bold;">
+                  {{ radio.tag }} {{ radio.choice_label }}
+              </label>
+          {% endfor %}
+      </div>
+
+    <button type="submit" class="primary-btn">Sign Up</button>
+    <p>Already have an account? <a href="{% url 'login' %}">Log In</a></p>
+  </form>
+</main>
+{%endblock%}
+</body>
+</html>

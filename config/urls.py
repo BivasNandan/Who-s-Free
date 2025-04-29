@@ -24,10 +24,10 @@ from chat import views as c_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', u_views.home),
+    path('', u_views.home, name='home'),
     path('events/', e_views.home),
     path('chat/', c_views.home),
-    path('register/', u_views.register, name='register'),
-    path('', include('django.contrib.auth.urls')),
+    path('signup/', u_views.signup, name='signup'),
+    path('login/', u_views.login_view, name = 'login'),
 
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
