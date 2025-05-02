@@ -27,7 +27,13 @@ urlpatterns = [
     path('', u_views.home, name='home'),
     path('events/', e_views.home),
     path('chat/', c_views.home),
-    path('signup/', u_views.signup, name='signup'),
+    path('user_signup/', u_views.user_signup, name='user_signup'),
+    path('business_signup/', u_views.business_signup, name='business_signup'),
     path('login/', u_views.login_view, name = 'login'),
+    path('logout/', u_views.logout_view, name = 'logout'),
+    path('individual_profile_setup/', u_views.individual_profile_setup, name='individual_profile_setup'),
+    path('business_profile_setup/', u_views.business_profile_setup, name='business_profile_setup'),
+    path('choose_user_type/', u_views.choose_user_type, name='choose_user_type'),
+    path('account/', u_views.account_view, name = 'account'),
 
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

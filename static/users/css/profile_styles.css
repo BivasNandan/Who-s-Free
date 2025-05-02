@@ -1,0 +1,103 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f8;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-size: 14px; /* Slightly smaller base font size */
+}
+
+.profile-container {
+    background-color: #fff;
+    padding: 30px; /* Reduced padding */
+    border-radius: 6px; /* Slightly smaller border radius */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); /* Subtler shadow */
+    width: 70%; /* Slightly smaller width */
+    max-width: 500px; /* Smaller maximum width */
+}
+
+header h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px; /* Reduced margin */
+    font-size: 1.8em; /* Slightly smaller heading */
+}
+
+.form-group {
+    margin-bottom: 15px; /* Reduced margin */
+}
+
+.form-group label {
+    display: block;
+    color: #555;
+    margin-bottom: 3px; /* Reduced margin */
+    font-weight: bold;
+    font-size: 0.95em; /* Slightly smaller label */
+}
+
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group input[type="file"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 8px; /* Reduced padding */
+    border: 1px solid #ddd;
+    border-radius: 3px; /* Smaller border radius */
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.form-group textarea {
+    min-height: 80px; /* Reduced height */
+}
+
+.form-group select[multiple] {
+    min-height: 60px; /* Reduced height */
+}
+
+.gender-group label {
+    margin-bottom: 8px; /* Reduced margin */
+    font-size: 0.95em;
+}
+
+.radio-group {
+    display: flex;
+    gap: 15px; /* Reduced gap */
+    align-items: center;
+}
+
+.radio-item label {
+    font-size: 0.9em; /* Slightly smaller radio label */
+}
+
+.radio-item input[type="radio"] {
+    margin-right: 3px; /* Reduced margin */
+    transform: scale(0.9); /* Slightly smaller radio button */
+}
+
+.primary-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 18px; /* Reduced padding */
+    border: none;
+    border-radius: 3px; /* Smaller border radius */
+    font-size: 16px; /* Smaller font size */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+    display: block;
+    margin-top: 20px; /* Reduced margin */
+}
+
+.primary-button:hover {
+    background-color: #0056b3;
+}
+
+.error {
+    color: #dc3545;
+    font-size: 0.85em; /* Smaller error message */
+    margin-top: 3px; /* Reduced margin */
+}

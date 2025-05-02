@@ -1,0 +1,53 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Your Profile</title>
+    <link rel="stylesheet" href="{% static 'users/css/profile_styles.css' %}">
+</head>
+<body>
+    <div class="profile-container">
+        <header>
+            <h1>Complete Your Profile</h1>
+        </header>
+        <main>
+        <form method="post" class="signup-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <h1>Complete Your Business Profile</h1>
+            <div class="form-group">
+                {{ form.profile_picture.label_tag }}
+                {{ form.profile_picture }}
+            </div>
+            <div class="form-group">
+                {{ form.phone_number.label_tag }}
+                {{ form.phone_number }}
+            </div>
+            <div class="form-group">
+                {{ form.company_name.label_tag }}
+                {{ form.company_name }}
+            </div>
+            <div class="form-group">
+                {{ form.bio.label_tag }}
+                {{ form.bio }}
+            </div>
+            <div class="form-group">
+                {{ form.business_address.label_tag }}
+                {{ form.business_address }}
+            </div>
+            <div class="form-group">
+                {{ form.website.label_tag }}
+                {{ form.website }}
+            </div>
+            <div class="form-group">
+                {{ form.sector.label_tag }}
+                {{ form.sector }}
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </main>
+</div>
+</body>
+</html>
