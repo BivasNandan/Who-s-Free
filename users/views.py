@@ -12,7 +12,7 @@ def home(request):
     return render(request, template_name='base.html')
 
 
-def user_signup(request):
+def user_signup(request):#individually signing up
     if request.method == 'POST':
         form = UserSignUpForm(request.POST)
         if form.is_valid():
@@ -113,3 +113,9 @@ def business_profile_setup(request):
 @login_required
 def account_view(request):
     return render(request, 'users/account.html', {'user': request.user})
+
+
+
+
+                        # FOR EVENTS
+

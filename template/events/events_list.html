@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Events</h1>
+
+<!-- Create Event Button -->
+<div style="margin-bottom: 20px;">
+    <a class="btn btn-primary" href="{% url 'create_event' %}">Create Event</a>
+</div>
+
+<ul>
+  {% for event in events %}
+    <li>
+      <h3>{{ event.name }}</h3>
+      <p>{{ event.description }}</p>
+      <p>Category: {{ event.get_category_display }}</p>
+      <p>Location: {{ event.location }}</p>
+      <p>Start Time: {{ event.start_time }}</p>
+      <p>End Time: {{ event.end_time }}</p>
+      <p>Organizer: {{ event.user.username }}</p>
+      {% if event.user != user %}
+        <a href="{% url 'mark_interested' event.id %}">Mark as Interested</a>
+      {% endif %}
+    </li>
+  {% empty %}
+    <p>No events available.</p>
+  {% endfor %}
+</ul>
+{% endblock %}

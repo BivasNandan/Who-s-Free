@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>My Created Events</h1>
+
+{% if events %}
+    <ul>
+        {% for event in events %}
+            <li>
+                <h3>{{ event.name }}</h3>
+                <p>{{ event.description }}</p>
+                <p>Category: {{ event.get_category_display }}</p>
+                <p>Location: {{ event.location }}</p>
+                <p>Start Time: {{ event.start_time }}</p>
+                <p>End Time: {{ event.end_time }}</p>
+                <a href="{% url 'update_event' event.id %}" class="btn btn-warning">Edit</a>
+                <a href="{% url 'delete_event' event.id %}" class="btn btn-danger">Delete</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>You have not created any events yet.</p>
+    <a href="{% url 'create_event' %}" class="btn btn-primary">Create Event</a>
+{% endif %}
+{% endblock %}

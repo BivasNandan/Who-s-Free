@@ -11,12 +11,11 @@
 <body>
     <div class="profile-container">
         <header>
-            <h1>Complete Your Profile</h1>
+            <h1>Complete Your Business Profile</h1>
         </header>
         <main>
         <form method="post" class="signup-form" enctype="multipart/form-data">
             {% csrf_token %}
-            <h1>Complete Your Business Profile</h1>
             <div class="form-group">
                 {{ form.profile_picture.label_tag }}
                 {{ form.profile_picture }}

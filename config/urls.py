@@ -25,7 +25,6 @@ from chat import views as c_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', u_views.home, name='home'),
-    path('events/', e_views.home),
     path('chat/', c_views.home),
     path('user_signup/', u_views.user_signup, name='user_signup'),
     path('business_signup/', u_views.business_signup, name='business_signup'),
@@ -35,5 +34,15 @@ urlpatterns = [
     path('business_profile_setup/', u_views.business_profile_setup, name='business_profile_setup'),
     path('choose_user_type/', u_views.choose_user_type, name='choose_user_type'),
     path('account/', u_views.account_view, name = 'account'),
+
+    #for events
+    path('events_list/', e_views.events_list, name='events_list'),
+    path('create/', e_views.create_event, name='create_event'),
+    path('update/<uuid:id>/', e_views.update_event, name='update_event'),
+    path('delete/<uuid:id>/', e_views.delete_event, name='delete_event'),
+    path('interested/<uuid:event_id>/', e_views.mark_interested, name='mark_interested'),
+    path('my_created_events/', e_views.my_created_events, name='my_created_events'),
+    path('my_interested_event/', e_views.my_interested_event, name='my_interested_event'),
+
 
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

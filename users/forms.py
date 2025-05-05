@@ -22,7 +22,7 @@ class UserSignUpForm(UserCreationForm):
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if CustomUser.objects.filter(email = email):
-            raise forms.ValidationError('An user with this email already exists!')
+            raise forms.ValidationError('A user with this email already exists!')
         return email
     
     def clean_username(self):

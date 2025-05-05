@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>My Interested Events</h1>
+
+{% if events %}
+    <ul>
+        {% for event in events %}
+            <li>
+                <h3>{{ event.name }}</h3>
+                <p>{{ event.description }}</p>
+                <p>Category: {{ event.get_category_display }}</p>
+                <p>Location: {{ event.location }}</p>
+                <p>Start Time: {{ event.start_time }}</p>
+                <p>End Time: {{ event.end_time }}</p>
+                <p>Organizer: {{ event.user.username }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'events_list' %}" class="btn btn-secondary">View All Events</a>
+{% else %}
+    <p>You have not marked any events as interested yet.</p>
+    <a href="{% url 'events_list' %}" class="btn btn-primary">View All Events</a>
+{% endif %}
+{% endblock %}
