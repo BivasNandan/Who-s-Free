@@ -1,22 +1,23 @@
 from django.db import models
-from users.models import *
-from events.models import *
+from users.models import CustomUser
 
 class ChatRoom(models.Model):
     """
-    Represents a chat room. Can be linked to an event or used for general/group chats.
+    Represents a one-on-one chat room between two individual users.
     """
-    name = models.CharField(max_length=255, blank=True, null=True)  # Optional for group chats
-    is_group = models.BooleanField(default=False)  # True for group chats, False for one-on-one
-    participants = models.ManyToManyField(CustomUser, related_name='chatrooms')  # Users in the chat room
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='chatrooms', blank=True, null=True)  # Optional link to an event
+    participants = models.ManyToManyField(CustomUser, related_name='chatrooms')  # Two users in the chat room
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        if self.event:
-            return f"ChatRoom for Event: {self.event.name}"
-        return self.name if self.name else f"ChatRoom {self.id}"
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['id'],  # Ensure unique chat rooms for each pair of users
+                name='unique_chat_room'
+            )
+        ]
 
+    def __str__(self):
+        return f"ChatRoom between {', '.join([user.username for user in self.participants.all()])}"
 
 class ChatMessage(models.Model):
     """

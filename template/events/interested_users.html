@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Users Interested in "{{ event.name }}"</h1>
+
+{% if interested_users %}
+    <ol>
+        {% for user in interested_users %}
+            <li>
+                <p><strong>{{ user.username }}</strong></p>
+                <p>Email: {{ user.email }}</p>
+                {% if user != self.user%}
+                    <a class="btn btn-primary" href="{% url 'send_friend_request' user.id %}">Send Friend request</a>
+                {%endif%}
+            </li>
+        {% endfor %}
+    </ol>
+{% else %}
+    <p>No users have marked this event as interested yet.</p>
+{% endif %}
+
+<a href="{% url 'my_created_events' %}" class="btn btn-secondary">Back to My Created Events</a>
+{% endblock %}

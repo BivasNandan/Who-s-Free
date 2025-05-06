@@ -25,7 +25,8 @@ from chat import views as c_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', u_views.home, name='home'),
-    path('chat/', c_views.home),
+
+    #for users
     path('user_signup/', u_views.user_signup, name='user_signup'),
     path('business_signup/', u_views.business_signup, name='business_signup'),
     path('login/', u_views.login_view, name = 'login'),
@@ -35,6 +36,14 @@ urlpatterns = [
     path('choose_user_type/', u_views.choose_user_type, name='choose_user_type'),
     path('account/', u_views.account_view, name = 'account'),
 
+    #handles friend aspect of things
+    path('send_friend_request/<uuid:id>/', u_views.send_friend_request, name='send_friend_request'),
+    path('accept_friend_request/<int:id>/', u_views.accept_friend_request, name='accept_friend_request'),
+    path('reject_friend_request/<int:id>/', u_views.reject_friend_request, name='reject_friend_request'),
+    path('friend_list/', u_views.friend_list, name='friend_list'),
+    path('friend_requests/', u_views.friend_requests, name='friend_requests'),
+    path('delete_friend/<uuid:user_id>/', u_views.delete_friend, name='delete_friend'),
+
     #for events
     path('events_list/', e_views.events_list, name='events_list'),
     path('create/', e_views.create_event, name='create_event'),
@@ -43,6 +52,10 @@ urlpatterns = [
     path('interested/<uuid:event_id>/', e_views.mark_interested, name='mark_interested'),
     path('my_created_events/', e_views.my_created_events, name='my_created_events'),
     path('my_interested_event/', e_views.my_interested_event, name='my_interested_event'),
+    path('interested_users/<uuid:id>/', e_views.interested_users, name='interested_users'),
+
+    #for chat
+    path('<uuid:user_id>/', c_views.chat_room, name='chat_room'),
 
 
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="chat-container">
+    <div class="chat-header">
+        <h2>Chat with {{ other_user.username }}</h2>
+    </div>
+    <div class="message-area" id="messageArea">
+        {% for message in messages_history %}
+            <div class="message {% if message.sender.username == username %}sent{% else %}received{% endif %}">
+                <span class="sender">{{ message.sender.username }}:</span>
+                <span class="content">{{ message.content }}</span>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="input-area">
+        <input type="text" id="chatInput" placeholder="Write your message...">
+        <button id="sendButton">Send</button>
+    </div>
+</div>
+
+<script>
+    const roomName = "{{ room_name|escapejs }}";
+    const username = "{{ username|escapejs }}";
+    const chatSocket = new WebSocket(
+        (window.location.protocol === 'https:' ? 'wss://' : 'ws://') +
+        window.location.host +
+        '/ws/chat/' +
+        roomName +
+        '/'
+    );
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message');
+        if (data.sender === username) {
+            messageElement.classList.add('sent');
+        } else {
+            messageElement.classList.add('received');
+        }
+        messageElement.innerHTML = `<span class="sender">${data.sender}:</span> <span class="content">${data.message}</span>`;
+        document.getElementById('messageArea').appendChild(messageElement);
+    };
+
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    document.getElementById('sendButton').onclick = function(e) {
+        const messageInput = document.getElementById('chatInput');
+        const message = messageInput.value.trim();
+        if (message) {
+            chatSocket.send(JSON.stringify({
+                'message': message,
+            }));
+            messageInput.value = '';
+        }
+    };
+</script>
+
+<style>
+    .chat-container {
+        background-color: #f8f8f8;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 80%;
+        max-width: 600px;
+        margin: 30px auto;
+        display: flex;
+        flex-direction: column;
+        height: 400px;
+    }
+
+    .chat-header {
+        background-color: #007bff;
+        color: white;
+        padding: 15px;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        text-align: center;
+    }
+
+    .message-area {
+        flex-grow: 1;
+        padding: 15px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .message {
+        padding: 8px 12px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        clear: both;
+    }
+
+    .sent {
+        background-color: #d4edda;
+        color: #155724;
+        align-self: flex-end;
+    }
+
+    .received {
+        background-color: #cce5ff;
+        color: #004085;
+        align-self: flex-start;
+    }
+
+    .sender {
+        font-weight: bold;
+        margin-right: 5px;
+    }
+
+    .content {
+        word-wrap: break-word;
+    }
+
+    .input-area {
+        padding: 15px;
+        border-top: 1px solid #e0e0e0;
+        display: flex;
+        gap: 10px;
+    }
+
+    .input-area input[type="text"] {
+        flex-grow: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+
+    .input-area button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 15px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .input-area button:hover {
+        background-color: #0056b3;
+    }
+</style>
+{% endblock %}

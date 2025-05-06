@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>My Friends</h1>
+
+{% if friends %}
+    <ul>
+        {% for friend in friends %}
+            <li>
+                <p><strong>{{ friend.username }}</strong></p>
+                <p>Email: {{ friend.email }}</p>
+                <a href="{% url 'delete_friend' friend.id %}" class="btn btn-danger">Delete Friend</a>
+                <a href="{% url 'chat_room' friend.id %}" class="btn btn-primary">Chat</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>You have no friends yet.</p>
+{% endif %}
+{% endblock %}

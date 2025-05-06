@@ -65,3 +65,9 @@ def my_created_events(request):
 def my_interested_event(request):
     events = Event.objects.filter(interested_users=request.user)
     return render(request, 'events/my_interested_event.html', {'events': events})
+
+@login_required
+def interested_users(request, id):
+    event = get_object_or_404(Event, id = id, user = request.user)
+    interested_users = event.interested_users.all()
+    return render(request, 'events/interested_users.html', {'event': event, 'interested_users': interested_users})

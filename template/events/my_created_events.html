@@ -15,6 +15,7 @@
                 <p>End Time: {{ event.end_time }}</p>
                 <a href="{% url 'update_event' event.id %}" class="btn btn-warning">Edit</a>
                 <a href="{% url 'delete_event' event.id %}" class="btn btn-danger">Delete</a>
+                <a class="btn btn-secondary" href="{% url 'interested_users' event.id%}">View Interested Users</a>
             </li>
         {% endfor %}
     </ul>

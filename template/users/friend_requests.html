@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Friend Requests</h1>
+
+{% if friend_requests %}
+    <ul>
+        {% for request in friend_requests %}
+            <li>
+                <p><strong>{{ request.from_user.username }}</strong></p>
+                <a href="{% url 'accept_friend_request' request.id %}" class="btn btn-success">Accept</a>
+                <a href="{% url 'reject_friend_request' request.id %}" class="btn btn-danger">Reject</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>You have no pending friend requests.</p>
+{% endif %}
+{% endblock %}

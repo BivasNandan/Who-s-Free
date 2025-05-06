@@ -1,11 +1,12 @@
-from django.shortcuts import render, redirect
-from .models import CustomUser
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import CustomUser, Friendship
 from .forms import UserSignUpForm, BusinessSignUpForm, Choose_User_Type, IndividualAdditionalInfo, BusinessAdditionalInfo
 from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.views import redirect_to_login
+from django.db.models import Q
 
 # Create your views here.
 def home(request):
@@ -114,8 +115,58 @@ def business_profile_setup(request):
 def account_view(request):
     return render(request, 'users/account.html', {'user': request.user})
 
+@login_required
+def send_friend_request(request, id):
+    to_user = get_object_or_404(CustomUser, id=id)
+    if Friendship.objects.filter(from_user=request.user, to_user=to_user).exists():
+        messages.error(request, "Friend request already sent.")
+    else:
+        Friendship.objects.create(from_user=request.user, to_user=to_user)
+        messages.success(request, "Friend request sent.")
+    return redirect('account')
+
+@login_required
+def accept_friend_request(request, id):
+    friend_request = get_object_or_404(Friendship, id=id, to_user=request.user)
+    friend_request.status = 'accepted'
+    friend_request.save()
+    messages.success(request, "Friend request accepted.")
+    return redirect('account')
+
+@login_required
+def reject_friend_request(request, id):
+    friend_request = get_object_or_404(Friendship, id=id, to_user=request.user)
+    friend_request.status = 'rejected'
+    friend_request.save()
+    messages.success(request, "Friend request rejected.")
+    return redirect('account')
 
 
+@login_required
+def friend_list(request):
+    """View to display the user's friends."""
+    friends = request.user.friends()
+    return render(request, 'users/friend_list.html', {'friends': friends})
 
-                        # FOR EVENTS
+@login_required
+def friend_requests(request):
+    """View to display the user's received friend requests."""
+    friend_requests = request.user.friend_requests()
+    return render(request, 'users/friend_requests.html', {'friend_requests': friend_requests})
 
+@login_required
+def delete_friend(request, user_id):
+    """Delete a friend relationship."""
+    friend = get_object_or_404(CustomUser, id=user_id)
+    # Check if the friendship exists
+    friendship = Friendship.objects.filter(
+        (Q(from_user=request.user, to_user=friend) | Q(from_user=friend, to_user=request.user)),
+        status='accepted'
+    ).first()
+
+    if friendship:
+        friendship.delete()
+        messages.success(request, f"You have removed {friend.username} from your friends.")
+    else:
+        messages.error(request, "You are not friends with this user.")
+    return redirect('friend_list')
