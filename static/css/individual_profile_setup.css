@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: rgb(240, 236, 236);
+  margin: 0;
+  padding: 0;
+  display: flex; /* Enable Flexbox on the body */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 100vh; /* Full viewport height */
+}
+
+.profile-container {
+  max-width: 600px;
+  width: 100%; /* Ensure responsiveness */
+  padding: 20px;
+  background: linear-gradient(90deg, #a6a6a6, #ffffff);
+  border: 1px solid #ddd; /* Subtle border */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+
+header h1 {
+  text-align: center;
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-group label {
+  font-weight: bold;
+  color: black;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #414040;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.form-group .error {
+  color: #d9534f;
+  font-size: 0.9rem;
+}
+
+.gender-group .radio-group {
+  display: flex;
+  gap: 15px;
+}
+
+.radio-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 16px;
+}
+
+.primary-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.primary-btn:hover {
+  background-color: #0056b3;
+}
+
+.primary-btn:active {
+  background-color: #003f7f;
+}
+

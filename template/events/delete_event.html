@@ -1,11 +1,17 @@
-{% extends 'base.html' %}
+{% extends 'navbar.html'%}
 
 {% block content %}
-<h1>Delete Event</h1>
-<p>Are you sure you want to delete the event "{{ event.name }}"?</p>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Delete</button>
-    <a href="{% url 'events_list' %}" class="btn btn-secondary">Cancel</a>
-</form>
+<style>
+    /* Paste the CSS here */
+</style>
+
+<div class="delete-confirmation">
+    <h1>Delete Event</h1>
+    <p>Are you sure you want to delete the event "<span class="event-name">{{ event.name }}</span>"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="{% url 'events_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
 {% endblock %}

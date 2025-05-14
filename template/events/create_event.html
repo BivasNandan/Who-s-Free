@@ -1,12 +1,129 @@
-{% extends 'base.html' %}
+{% extends 'users/account.html' %}
 
 {% block content %}
-<h1>Create Event</h1>
 
-<!-- Event Creation Form -->
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}  <!-- Render the form fields -->
-    <button type="submit" class="btn btn-primary">Create Event</button>
-</form>
+    <div class="form-container">
+        <div class="event-form-card">
+            <h1 class="form-title">Create New Event</h1>
+
+            <form method="post" class="event-form" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Banner Upload -->
+                <div class="form-group">
+                    <label for="id_banner">Event Banner (Optional)</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" name="banner" id="id_banner" accept="image/*">
+                        <div class="file-upload-preview">
+                            <img id="banner-preview" src="#" alt="Banner Preview" style="display: none;">
+                            <div class="upload-placeholder">
+                                <i class="fas fa-image"></i>
+                                <span>Click to upload banner</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% if form.banner.errors %}
+                        <div class="error-message">{{ form.banner.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Event Name -->
+                <div class="form-group">
+                    <label for="{{ form.name.id_for_label }}">Event Name</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        <div class="error-message">{{ form.name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="{{ form.description.id_for_label }}">Description</label>
+                    {{ form.description }}
+                    <small class="char-counter"><span id="desc-counter">0</span>/255 characters</small>
+                    {% if form.description.errors %}
+                        <div class="error-message">{{ form.description.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-row">
+                    <!-- Category -->
+                    <div class="form-group">
+                        <label for="{{ form.category.id_for_label }}">Category</label>
+                        {{ form.category }}
+                        {% if form.category.errors %}
+                            <div class="error-message">{{ form.category.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Location -->
+                    <div class="form-group">
+                        <label for="{{ form.location.id_for_label }}">Location</label>
+                        {{ form.location }}
+                        {% if form.location.errors %}
+                            <div class="error-message">{{ form.location.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <!-- Start Time -->
+                    <div class="form-group">
+                        <label for="{{ form.start_time.id_for_label }}">Start Time</label>
+                        {{ form.start_time }}
+                        {% if form.start_time.errors %}
+                            <div class="error-message">{{ form.start_time.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- End Time -->
+                    <div class="form-group">
+                        <label for="{{ form.end_time.id_for_label }}">End Time</label>
+                        {{ form.end_time }}
+                        {% if form.end_time.errors %}
+                            <div class="error-message">{{ form.end_time.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="b b-submit ">
+                        <i class="fas fa-calendar-plus"></i>Save Event
+                    </button>
+                    <a href="{% url 'events_list' %}" class="b b-cancel">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+<script>
+    // Banner preview functionality
+    document.getElementById('id_banner').addEventListener('change', function(e) {
+        const preview = document.getElementById('banner-preview');
+        const placeholder = document.querySelector('.upload-placeholder');
+
+        if (this.files && this.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+            }
+
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+
+    // Character counter for description
+    document.getElementById('id_description').addEventListener('input', function() {
+        const counter = document.getElementById('desc-counter');
+        counter.textContent = this.value.length;
+    });
+</script>
 {% endblock %}
+
+

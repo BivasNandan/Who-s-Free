@@ -1,0 +1,189 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+.event-page-wrapper {
+  background: linear-gradient(90deg, #a6a6a6, #ffffff);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 6rem 0 2rem;  /* Top padding increased to leave space for fixed navbar */
+}
+
+.events-container {
+  max-width: 1200px;
+  width: 100%;
+  padding: 0 20px;
+  margin-top: 4rem;  /* Add this line to push content down */
+}
+
+.events-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.events-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.btn-create {
+  background: #2c668f;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-create:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+}
+
+/* Grid layout */
+.event-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  width: 100%;
+}
+
+.event-card {
+  background: linear-gradient(90deg, #b3d3df, #4d98fd);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.event-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.event-banner {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.event-banner.placeholder {
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bbb;
+  font-size: 2rem;
+}
+
+.event-content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.event-category {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+}
+
+.category-concert { background-color: #e74c3c; color: white; }
+.category-workshop { background-color: #3498db; color: white; }
+.category-seminar { background-color: #2ecc71; color: white; }
+.category-conference { background-color: #9b59b6; color: white; }
+.category-meetup { background-color: #f39c12; color: white; }
+
+.event-title {
+  color: #2c668f;
+  font-size: 1.4rem;
+  margin-bottom: 0.8rem;
+}
+
+.event-description {
+  color: White;
+  font-weight: 400;
+  line-height: 1.5;
+  flex-grow: 1;
+}
+
+.event-details {
+  margin: 1.2rem 0;
+  color: White;
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+.event-detail {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.event-detail i {
+  margin-right: 10px;
+  color: #3498db;
+  width: 20px;
+  text-align: center;
+}
+
+.event-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #ecf0f1;
+  margin-top: auto;
+}
+
+.btn-interested {
+  background: #2c668f;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-interested:hover {
+  background: #333;
+}
+
+.no-events {
+  text-align: center;
+  padding: 2rem;
+  color: #7f8c8d;
+  font-size: 1.2rem;
+  grid-column: 1 / -1;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .event-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+

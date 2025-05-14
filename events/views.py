@@ -7,7 +7,7 @@ from .forms import EventForm
 @login_required
 def create_event(request):
     if request.method == 'POST':  # Fixed request method check
-        form = EventForm(request.POST)
+        form = EventForm(request.POST,request.FILES)
         if form.is_valid():
             event = form.save(commit=False)
             event.user = request.user
@@ -22,14 +22,14 @@ def create_event(request):
 def update_event(request, id):
     event = get_object_or_404(Event, id=id, user=request.user)  # Ensure only the creator can update
     if request.method == 'POST':
-        form = EventForm(request.POST, instance=event)  # Fixed instance binding
+        form = EventForm(request.POST,request.FILES, instance=event)  # Fixed instance binding
         if form.is_valid():
             form.save()
             messages.success(request, 'The event has been updated successfully!')  # Fixed messages.success
             return redirect('events_list')  # Fixed redirect
     else:
         form = EventForm(instance=event)  # Fixed instance binding
-    return render(request, 'events/update_event.html', {'form': form})
+    return render(request, 'events/create_event.html', {'form': form})
 
 @login_required
 def delete_event(request, id):

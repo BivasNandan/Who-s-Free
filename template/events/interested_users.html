@@ -1,23 +1,40 @@
-{% extends 'base.html' %}
+{% extends 'users/account.html'%}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/friends_list.css' %}">
+{% endblock %}
 
 {% block content %}
-<h1>Users Interested in "{{ event.name }}"</h1>
+<div class="friends-container">
+    <h1 class="friends-header">Users Interested in "{{ event.name }}"</h1>
 
-{% if interested_users %}
-    <ol>
-        {% for user in interested_users %}
-            <li>
-                <p><strong>{{ user.username }}</strong></p>
-                <p>Email: {{ user.email }}</p>
-                {% if user != self.user%}
-                    <a class="btn btn-primary" href="{% url 'send_friend_request' user.id %}">Send Friend request</a>
-                {%endif%}
-            </li>
-        {% endfor %}
-    </ol>
-{% else %}
-    <p>No users have marked this event as interested yet.</p>
-{% endif %}
+    {% if interested_users %}
+        <div class="friends-grid">
+            {% for user in interested_users %}
+                <div class="friend-card">
+                    {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" class="friend-avatar">
+                    {% else %}
+                        <img src="{% static 'images/default_profile.png' %}" alt="Default Avatar" class="friend-avatar">
+                    {% endif %}
+                    
+                    <h3 class="friend-username">{{ user.username }}</h3>
+                    <p class="friend-detail">Email: {{ user.email }}</p>
 
-<a href="{% url 'my_created_events' %}" class="btn btn-secondary">Back to My Created Events</a>
+                    {% if user != request.user %}
+                    <div class="friend-actions">
+                        <a href="{% url 'send_friend_request' user.id %}" class="btn btn-primary">Send Friend Request</a>
+                    </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-friends">
+            <p>No users have marked this event as interested yet.</p>
+        </div>
+    {% endif %}
+
+    <a href="{% url 'my_created_events' %}" class="btn btn-secondary">Back to My Created Events</a>
+</div>
 {% endblock %}

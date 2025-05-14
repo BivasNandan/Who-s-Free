@@ -1,19 +1,38 @@
-{% extends 'base.html' %}
+{% extends 'users/account.html'%}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/friends_list.css' %}">
+{% endblock %}
 
 {% block content %}
-<h1>Friend Requests</h1>
+<div class="friends-container">
+    <h1 class="friends-header">Friend Requests</h1>
 
-{% if friend_requests %}
-    <ul>
-        {% for request in friend_requests %}
-            <li>
-                <p><strong>{{ request.from_user.username }}</strong></p>
-                <a href="{% url 'accept_friend_request' request.id %}" class="btn btn-success">Accept</a>
-                <a href="{% url 'reject_friend_request' request.id %}" class="btn btn-danger">Reject</a>
-            </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>You have no pending friend requests.</p>
-{% endif %}
+    {% if friend_requests %}
+        <div class="friends-grid">
+            {% for request in friend_requests %}
+                <div class="friend-card">
+                    {% if request.from_user.profile_picture %}
+                        <img src="{{ request.from_user.profile_picture.url }}" alt="{{ request.from_user.username }}" class="friend-avatar">
+                    {% else %}
+                        <img src="{% static 'images/default_profile.png' %}" alt="Default Avatar" class="friend-avatar">
+                    {% endif %}
+
+                    <h3 class="friend-username">{{ request.from_user.username }}</h3>
+                    <p class="friend-detail">Email: {{ request.from_user.email }}</p>
+
+                    <div class="friend-actions">
+                        <a href="{% url 'accept_friend_request' request.id %}" class="btn btn-success">Accept</a>
+                        <a href="{% url 'reject_friend_request' request.id %}" class="btn btn-danger">Reject</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-friends">
+            <p>You have no pending friend requests.</p>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

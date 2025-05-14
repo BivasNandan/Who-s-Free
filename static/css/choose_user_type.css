@@ -1,0 +1,59 @@
+/* Ensure the body takes the full height and centers the content */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9; /* Optional: Add a background color */
+}
+
+/* Wrapper to account for the fixed navbar */
+.main-wrapper {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  min-height: calc(100vh - 90px); /* Subtract the navbar height */
+  padding-top: 90px; /* Prevent overlap with the navbar */
+}
+
+/* Style the form container */
+.signup-form {
+  max-width: 400px;
+  width: 100%; /* Ensure responsiveness */
+  padding: 20px;
+  background: linear-gradient(90deg, #a6a6a6, #ffffff); /* Light background for the form */
+  border: 1px solid #ddd; /* Subtle border */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  text-align: center;
+}
+
+/* Style the heading */
+.signup-form h1 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #333; /* Darker text for contrast */
+}
+
+/* Style the buttons */
+.signup-form .primary-btn {
+  display: block;
+  width: 100%;
+  padding: 10px 20px;
+  margin: 10px 0;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: black; /* Primary button color */
+  border: none;
+  border-radius: 5px; /* Rounded button edges */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.signup-form .primary-btn:hover {
+  background-color: #3a5a8f; /* Darker shade on hover */
+}
+
+.signup-form .primary-btn:active {
+  background-color: #2a4f6f; /* Even darker shade when clicked */
+}

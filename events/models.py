@@ -4,9 +4,10 @@ import uuid
 
 class Event(models.Model):
     # Basic information of an event
+    banner = models.ImageField(upload_to='banner/', blank=True, null=True)
     id = models.UUIDField(primary_key=True, editable=False, unique=True, default=uuid.uuid4)
     name = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.CharField(max_length=255)
     EVENT_CATEGORY_CHOICES = [
         ('CONCERT', 'Concert'),
         ('WORKSHOP', 'Workshop'),
@@ -21,7 +22,7 @@ class Event(models.Model):
     end_time = models.DateTimeField()
 
     # Location of the event
-    location = models.TextField()
+    location = models.CharField(max_length=255)
 
     # User/organizer information of the event
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='events')

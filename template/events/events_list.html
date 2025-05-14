@@ -1,29 +1,67 @@
-{% extends 'base.html' %}
+{% extends 'users/account.html' %}
+{% load static %}
 
 {% block content %}
-<h1>Events</h1>
+<div class="event-page-wrapper">
+  <div class="events-container">
+    <div class="events-header">
+      <h1 class="events-title">Upcoming Events</h1>
+      <a class="btn-create" href="{% url 'create_event' %}">
+        <i class="fas fa-plus"></i> Create Event
+      </a>
+    </div>
 
-<!-- Create Event Button -->
-<div style="margin-bottom: 20px;">
-    <a class="btn btn-primary" href="{% url 'create_event' %}">Create Event</a>
+    <div class="event-list">
+      {% for event in events %}
+      <div class="event-card">
+        {% if event.banner %}
+        <img src="{{ event.banner.url }}" alt="{{ event.name }} banner" class="event-banner">
+        {% else %}
+        <div class="event-banner placeholder">
+          <i class="fas fa-calendar-alt"></i>
+        </div>
+        {% endif %}
+
+        <div class="event-content">
+          <span class="event-category category-{{ event.category|lower }}">{{ event.get_category_display }}</span>
+          <h3 class="event-title">{{ event.name }}</h3>
+          <p class="event-description">{{ event.description }}</p>
+
+          <div class="event-details">
+            <div class="event-detail">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>{{ event.location }}</span>
+            </div>
+            <div class="event-detail">
+              <i class="fas fa-calendar-day"></i>
+              <span>{{ event.start_time|date:"M d, Y" }}</span>
+            </div>
+            <div class="event-detail">
+              <i class="fas fa-clock"></i>
+              <span>{{ event.start_time|date:"h:i A" }} - {{ event.end_time|date:"h:i A" }}</span>
+            </div>
+            <div class="event-detail">
+              <i class="fas fa-user"></i>
+              <span>Organizer: {{ event.user.username }}</span>
+            </div>
+          </div>
+
+          <div class="event-actions">
+            {% if event.user != user %}
+            <a href="{% url 'mark_interested' event.id %}" class="btn-interested">
+              <i class="fas fa-star"></i> Interested
+            </a>
+            {% endif %}
+            <span>{{ event.interested_users.count }} interested</span>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="no-events">
+        <p>No events available. Be the first to create one!</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
 </div>
-
-<ul>
-  {% for event in events %}
-    <li>
-      <h3>{{ event.name }}</h3>
-      <p>{{ event.description }}</p>
-      <p>Category: {{ event.get_category_display }}</p>
-      <p>Location: {{ event.location }}</p>
-      <p>Start Time: {{ event.start_time }}</p>
-      <p>End Time: {{ event.end_time }}</p>
-      <p>Organizer: {{ event.user.username }}</p>
-      {% if event.user != user %}
-        <a href="{% url 'mark_interested' event.id %}">Mark as Interested</a>
-      {% endif %}
-    </li>
-  {% empty %}
-    <p>No events available.</p>
-  {% endfor %}
-</ul>
 {% endblock %}

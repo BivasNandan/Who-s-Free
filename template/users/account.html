@@ -1,30 +1,73 @@
-{% extends 'base.html' %}
+{% load static %}
 
-{% block content %}
-<h1>Welcome, {{ user.username }}</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Account</title>
 
-{% if user.profile_picture %}
-    <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; margin-bottom: 15px;">
-        <img src="{{ user.profile_picture.url }}" alt="Profile Picture" style="width: 100%; height: 100%; object-fit: cover;">
-    </div>
-{% endif %}
+    <link rel="stylesheet" href="{% static 'css/account.css' %}">
+    <link rel="stylesheet" href="{% static 'css/my_created_events.css' %}">
+    <link rel="stylesheet" href="{% static 'css/create_event.css' %}">
+    <link rel="stylesheet" href="{% static 'css/delete_event.css' %}">
+    <link rel="stylesheet" href="{% static 'css/my_created_event.css' %}">
+    <link rel="stylesheet" href="{% static 'css/event_list.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    <header>
+        <div class="brand">
+            <h1>WHO'S FREE</h1>
+            <p>You will never have to be alone</p>
+        </div>
+        <nav>
+            <a href="{% url 'friend_list' %}">Friends</a>
+            <a href="{% url 'my_created_events' %}">My Events</a>
+            <a href="{% url 'my_interested_event' %}">My Interested Events</a>
+            <a href="{% url 'events_list' %}">All Events</a>
+            <a href="{% url 'friend_requests' %}">View Friend Request</a>
+            <a href="{% url 'account' %}">
+                {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="nav-profile-picture">
+                {% else %}
+                    <img src="{% static 'images/default_profile.png' %}" alt="Default Profile Picture" class="nav-profile-picture">
+                {% endif %}
+            </a>
+        </nav>
+    </header>
+    {%block content%}
 
-<h3>User Type: {{ user.user_type }}</h3>
-<p>UUID: {{ user.id }}</p>
-<p>Email: {{ user.email }}</p>
-<p>Phone Number: {{ user.phone_number }}</p>
-<p>Bio: {{ user.bio }}</p>
-<p>Last Login: {{ user.last_login }}</p>
-<p>Date joined: {{ user.date_joined }}</p>
+    <!-- Account Details -->
+    <main>
+        <div class="account-container">
+            <div class="account-details">
+                <h1>Welcome, {{ user.first_name }}!</h1>
+                <div class="account-card">
+                    <div class="account-info">
+                        <p><strong>Username:</strong> {{ user.username }}</p>
+                        <p><strong>Email:</strong> {{ user.email }}</p>
+                        <p><strong>Account Type:</strong> {{ user.user_type|title }}</p>
+                        <p><strong>Phone Number:</strong> {{ user.phone_number }}</p>
+                        <p><strong>Bio:</strong> {{ user.bio|default:"No bio available" }}</p>
+                        <p><strong>Interests:</strong> {{ user.interests|default:"No interests added" }}</p>
+                    </div>
+                    <div class="profile-picture">
+                        {% if user.profile_picture %}
+                            <img src="{{ user.profile_picture.url }}" alt="Profile Picture">
+                        {% else %}
+                            <img src="{% static 'images/default_profile.png' %}" alt="Default Profile Picture">
+                        {% endif %}
+                    </div>
+                </div>
 
-<!-- Buttons for navigating to created and interested events -->
-<div style="margin-top: 20px;">
-    <a class="btn btn-primary" href="{% url 'create_event' %}">Create Event</a>
-    <a class="btn btn-primary" href="{% url 'my_created_events' %}">My Created Events</a>
-    <a class="btn btn-secondary" href="{% url 'my_interested_event' %}">My Interested Events</a>
-    <a class="btn btn-primary" href="{% url 'friend_list' %}">My Friends</a>
-    <a class="btn btn-secondary" href="{% url 'friend_requests' %}">Friend Requests</a>
-</div>
-<br>
-    <a class="primary-btn" href="{% url 'logout' %}">Logout</a>
-{% endblock %}
+                <div class="logout-container">
+                    <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+                </div>
+        </div>
+    </main>
+    {%endblock%}
+</body>
+</html>

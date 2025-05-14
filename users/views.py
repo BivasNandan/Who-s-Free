@@ -11,7 +11,8 @@ from django.db.models import Q
 # Create your views here.
 def home(request):
     return render(request, template_name='landing_page.html')
-
+def create(request):
+    return render(request, template_name='users/create.html')
 
 def user_signup(request):#individually signing up
     if request.method == 'POST':

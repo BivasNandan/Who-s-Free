@@ -1,0 +1,251 @@
+/* Main Container */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100..900;1,100..900&display=swap');
+
+.my-events-container {
+    max-width: 1200px;
+    margin: 120px auto 2rem; /* Increased top margin for navbar spacing */
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Header Styles */
+.my-events-header {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.my-event-list {
+    width: 100%;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+    justify-items: center; /* Center grid items */
+}
+
+/* Create Event Button */
+.b-create {
+    background: #2c668f;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.b-create:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+}
+
+/* Event List */
+.my-event-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+/* Event Card */
+.my-event-card {
+    background: linear-gradient(90deg, #b3d3df, #4d98fd  ); /* light color background for the form */
+    border: 1px solid #ddd; /* Subtle border */
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+}
+
+.my-event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Banner Image */
+.my-event-banner {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+/* Event Content */
+.my-event-content {
+    padding: 1.5rem;
+}
+
+/* Category Badge */
+.my-event-category {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+}
+
+/* Category Colors */
+.category-concert { background-color: #e74c3c; color: white; }
+.category-workshop { background-color: #3498db; color: white; }
+.category-seminar { background-color: #2ecc71; color: white; }
+.category-conference { background-color: #9b59b6; color: white; }
+.category-meetup { background-color: #f39c12; color: white; }
+
+/* Event Title */
+.my-event-title {
+    color: #2c3e50;
+    margin: 0 0 0.8rem 0;
+    font-size: 1.4rem;
+}
+
+/* Event Description */
+.my-event-description {
+    color: White;
+    margin-bottom: 1.2rem;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+/* Event Details */
+.my-event-details {
+    margin: 1.2rem 0;
+    color: White;
+    font-size: 0.95rem;
+    
+}
+
+.my-event-detail {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.6rem;
+}
+
+.my-event-detail i {
+    margin-right: 10px;
+    color: #3498db;
+    width: 20px;
+    text-align: center;
+}
+
+/* Event Actions */
+.my-event-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #ecf0f1;
+}
+
+.bt {
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+}
+
+.bt-warning {
+    background: #007489;
+    color: white;
+}
+
+.bt-warning:hover {
+    background: #7fa6ad;
+}
+
+.bt-danger {
+    background: #6a8cab;
+    color: white;
+}
+
+.bt-danger:hover {
+    background: #89b1d6;
+}
+
+.bt-secondary {
+    background: #5195bb;
+    color: white;
+}
+
+.bt-secondary:hover {
+    background: #5ea6cf;
+}
+
+/* No Events Message */
+.no-events {
+    text-align: center;
+    grid-column: 1 / -1;
+    padding: 3rem;
+    color: #101213;
+    font-size: 1.2rem;
+    background: linear-gradient(90deg, #a6a6a6, #ffffff); /* Light background for the form */
+    border: 1px solid #ddd; /* Subtle border */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+
+/* Creator Badge */
+.creator-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.btn-create {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #2c668f;
+  color: #fff;
+  text-decoration: none;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-create:hover {
+  background-color: #1e4a6e;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .my-event-list {
+        grid-template-columns: 1fr;
+    }
+
+    .my-events-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .my-event-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

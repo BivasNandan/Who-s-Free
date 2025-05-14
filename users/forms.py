@@ -71,6 +71,9 @@ class IndividualAdditionalInfo(forms.ModelForm):
             'interests',
             'gender',
         ]
+        widgets = {
+            'birth_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        }
 
 class BusinessAdditionalInfo(forms.ModelForm):
     class Meta:

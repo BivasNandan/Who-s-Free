@@ -35,6 +35,7 @@ urlpatterns = [
     path('business_profile_setup/', u_views.business_profile_setup, name='business_profile_setup'),
     path('choose_user_type/', u_views.choose_user_type, name='choose_user_type'),
     path('account/', u_views.account_view, name = 'account'),
+    path('create/', u_views.create, name = 'create'),
 
     #handles friend aspect of things
     path('send_friend_request/<uuid:id>/', u_views.send_friend_request, name='send_friend_request'),
@@ -46,7 +47,7 @@ urlpatterns = [
 
     #for events
     path('events_list/', e_views.events_list, name='events_list'),
-    path('create/', e_views.create_event, name='create_event'),
+    path('create_event/', e_views.create_event, name='create_event'),
     path('update/<uuid:id>/', e_views.update_event, name='update_event'),
     path('delete/<uuid:id>/', e_views.delete_event, name='delete_event'),
     path('interested/<uuid:event_id>/', e_views.mark_interested, name='mark_interested'),

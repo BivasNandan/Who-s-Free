@@ -1,20 +1,39 @@
-{% extends 'base.html' %}
+{% extends 'users/account.html'%}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/friends_list.css' %}">
+{% endblock %}
 
 {% block content %}
-<h1>My Friends</h1>
+<div class="friends-container">
+    <h1 class="friends-header">My Friends</h1>
 
-{% if friends %}
-    <ul>
-        {% for friend in friends %}
-            <li>
-                <p><strong>{{ friend.username }}</strong></p>
-                <p>Email: {{ friend.email }}</p>
-                <a href="{% url 'delete_friend' friend.id %}" class="btn btn-danger">Delete Friend</a>
-                <a href="{% url 'chat_room' friend.id %}" class="btn btn-primary">Chat</a>
-            </li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>You have no friends yet.</p>
-{% endif %}
+    <!-- Friend Requests Button -->
+    {% if friends %}
+        <div class="friends-grid">
+            {% for friend in friends %}
+                <div class="friend-card">
+                    {% if friend.profile_picture %}
+                        <img src="{{ friend.profile_picture.url }}" alt="{{ friend.username }}" class="friend-avatar">
+                    {% else %}
+                        <img src="{% static 'images/default_profile.png' %}" alt="Default Avatar" class="friend-avatar">
+                    {% endif %}
+
+                    <h3 class="friend-username">{{ friend.username }}</h3>
+                    <p class="friend-detail">Email: {{ friend.email }}</p>
+                    <p class="friend-detail">Birthday: {{ friend.birth_date|date:"F d, Y"|default:"Not specified" }}</p>
+
+                    <div class="friend-actions">
+                        <a href="{% url 'delete_friend' friend.id %}" class="btn btn-danger">Delete Friend</a>
+                        <a href="{% url 'chat_room' friend.id %}" class="btn btn-primary">Chat</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-friends">
+            <p>You have no friends yet.</p>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

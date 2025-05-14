@@ -1,26 +1,70 @@
-{% extends 'base.html' %}
+{% extends 'users/account.html'%}
 
 {% block content %}
-<h1>My Created Events</h1>
+<div class="my-events-container">
+    <div class="my-events-header">
+        <h1 class="my-events-title">My Created Events</h1>
+        <a href="{% url 'create_event' %}" class="b-create">
+            <i class="fas fa-plus"></i> Create New Event
+        </a>
+    </div>
 
-{% if events %}
-    <ul>
+    {% if events %}
+    <div class="my-event-list">
         {% for event in events %}
-            <li>
-                <h3>{{ event.name }}</h3>
-                <p>{{ event.description }}</p>
-                <p>Category: {{ event.get_category_display }}</p>
-                <p>Location: {{ event.location }}</p>
-                <p>Start Time: {{ event.start_time }}</p>
-                <p>End Time: {{ event.end_time }}</p>
-                <a href="{% url 'update_event' event.id %}" class="btn btn-warning">Edit</a>
-                <a href="{% url 'delete_event' event.id %}" class="btn btn-danger">Delete</a>
-                <a class="btn btn-secondary" href="{% url 'interested_users' event.id%}">View Interested Users</a>
-            </li>
+        <div class="my-event-card">
+            {% if event.banner %}
+            <img src="{{ event.banner.url }}" alt="{{ event.name }} banner" class="my-event-banner">
+            {% else %}
+            <div class="my-event-banner" style="background: #eee; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-calendar-alt" style="font-size: 2rem; color: #bbb;"></i>
+            </div>
+            {% endif %}
+
+            <span class="creator-badge">Your Event</span>
+
+            <div class="my-event-content">
+                <span class="my-event-category category-{{ event.category|lower }}">{{ event.get_category_display }}</span>
+                <h3 class="my-event-title">{{ event.name }}</h3>
+                <p class="my-event-description">{{ event.description }}</p>
+
+                <div class="my-event-details">
+                    <div class="my-event-detail">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>{{ event.location }}</span>
+                    </div>
+                    <div class="my-event-detail">
+                        <i class="fas fa-calendar-day"></i>
+                        <span>{{ event.start_time|date:"M d, Y" }}</span>
+                    </div>
+                    <div class="my-event-detail">
+                        <i class="fas fa-clock"></i>
+                        <span>{{ event.start_time|date:"h:i A" }} - {{ event.end_time|date:"h:i A" }}</span>
+                    </div>
+                </div>
+
+                <div class="my-event-actions">
+                    <a href="{% url 'update_event' event.id %}" class="bt bt-warning">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <a href="{% url 'delete_event' event.id %}" class="bt bt-danger">
+                        <i class="fas fa-trash"></i> Delete
+                    </a>
+                    <a href="{% url 'interested_users' event.id %}" class="bt bt-secondary">
+                        <i class="fas fa-users"></i> View Interested
+                    </a>
+                </div>
+            </div>
+        </div>
         {% endfor %}
-    </ul>
-{% else %}
-    <p>You have not created any events yet.</p>
-    <a href="{% url 'create_event' %}" class="btn btn-primary">Create Event</a>
-{% endif %}
+    </div>
+    {% else %}
+    <div class="no-events">
+        <p>You haven't created any events yet.</p>
+        <a href="{% url 'create_event' %}" class="btn-create" style="margin-top: 1rem;">
+            <i class="fas fa-plus"></i> Create Your First Event
+        </a>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}

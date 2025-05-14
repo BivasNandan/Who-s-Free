@@ -22,12 +22,12 @@ class CustomUser(AbstractUser):
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     phone_number = models.CharField(max_length=15, blank=False, null=True)
     birth_date = models.DateField(null=True, blank=False)#only for individuals
-    bio = models.TextField(blank=True, null=True)
-    interests = models.TextField(blank=True, null=True)
+    bio = models.CharField(max_length=255, blank=True, null=True)
+    interests = models.CharField(max_length=255, blank=True, null=True)
 
     # Fields specific to businesses
     company_name = models.CharField(max_length=255, blank=False, null=True)
-    business_address = models.TextField(blank=True, null=True)
+    business_address = models.CharField(max_length=255, blank=True, null=True)
     website = models.URLField(blank=True, null=True)
     
     sector = models.CharField(max_length=255, null=True, blank=True) #in which sector the company operates

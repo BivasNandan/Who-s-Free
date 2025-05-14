@@ -1,50 +1,56 @@
-{%extends 'navbar.html' %}
+{% extends 'navbar.html'%}
 {% load static %}
 
-{%block content%}
-<main class="signup-page">
-  <h1>Create Your Account</h1>
-  <form class="signup-form" method="post">
-    {% csrf_token %}
-        {{ form.first_name.label_tag }}
-        {{ form.first_name }}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
 
-        {{ form.last_name.label_tag }}
-        {{ form.last_name }}
+{% block body_class %}login-page{% endblock %}
 
-        {{ form.username.label_tag }}
-        {{ form.username }}
+{% block content %}
 
-        {% if form.username.errors %}
-        <ul class="errorlist" style="color: red; margin: 10px 0; padding: 5px; border: 1px solid red; border-radius: 5px; background-color: #ffe6e6;">
-          {% for error in form.username.errors %}
-            <li>{{ error }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
+<div class="wrapper">
+    <form method="post">
+        {% csrf_token %}
+        <h1>Create Your Account</h1>
 
-        {{ form.email.label_tag }}
-        {{ form.email }}
+        <div class="input-box">
+            {{ form.first_name.label_tag }}
+            {{ form.first_name }}
+        </div>
 
-        {% if form.email.errors %}
-          <ul class="errorlist" style="color: red; margin: 10px 0; padding: 5px; border: 1px solid red; border-radius: 5px; background-color: #ffe6e6;">
-            {% for error in form.email.errors %}
-              <li>{{ error }}</li>
-            {% endfor %}
-          </ul>
-        {% endif %}
+        <div class="input-box">
+            {{ form.last_name.label_tag }}
+            {{ form.last_name }}
+        </div>
 
-        {{ form.password1.label_tag }}
-        {{ form.password1 }}
+        <div class="input-box">
+              {{ form.username.label_tag }}
+              {{ form.username }}
+        </div>
 
-        {{ form.password2.label_tag }}
-        {{ form.password2 }}
+        <div class="input-box">
+             {{ form.email.label_tag }}
+             {{ form.email }}
+        </div>
+
+        <div class="input-box">
+              {{ form.password1.label_tag }}
+              {{ form.password1 }}
+        </div>
+
+        <div class="input-box">
+               {{ form.password2.label_tag }}
+               {{ form.password2 }}
+        </div>
 
 
-    <button type="submit" class="primary-btn">Sign Up</button>
-    <p>Already have an account? <a href="{% url 'login' %}">Log In</a></p>
-  </form>
-</main>
-{%endblock%}
-</body>
-</html>
+        <button type="submit" class="btn">Sign Up</button>
+
+        <div class="register-link">
+            <p>Already have an account? <a href="{% url 'login' %}">Log In</a></p>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
