@@ -1,38 +1,220 @@
-{% extends 'users/account.html'%}
+{% extends 'navbar.html' %}
 {% load static %}
 
+{% block title %}Friend Requests — Who's Free{% endblock %}
+
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/friends_list.css' %}">
+<style>
+  .requests-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .page-title {
+    font-family: var(--pixel);
+    font-size: 0.75rem;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+  }
+
+  .btn-back {
+    font-family: var(--doodle);
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 8px 16px;
+    background: var(--white);
+    color: var(--ink);
+    border: var(--border);
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    border-radius: 2px;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+
+  .btn-back:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--ink);
+    color: var(--ink);
+  }
+
+  .requests-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .request-card {
+    background: var(--white);
+    border: var(--border);
+    box-shadow: var(--shadow);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    transition: transform 0.15s, box-shadow 0.15s;
+    animation: cardIn 0.4s ease both;
+  }
+
+  .request-card:nth-child(1) { animation-delay: 0ms; }
+  .request-card:nth-child(2) { animation-delay: 60ms; }
+  .request-card:nth-child(3) { animation-delay: 120ms; }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateX(-16px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .request-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+
+  .req-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: var(--border);
+    box-shadow: 2px 2px 0 var(--ink);
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .req-info { flex: 1; }
+
+  .req-username {
+    font-family: var(--doodle);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+
+  .req-email {
+    font-family: var(--doodle);
+    font-size: 0.9rem;
+    color: #888;
+  }
+
+  .req-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .btn-accept,
+  .btn-reject {
+    font-family: var(--doodle);
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 8px 16px;
+    border: 2px solid;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: transform 0.1s, box-shadow 0.1s, background 0.15s;
+    display: inline-block;
+  }
+
+  .btn-accept {
+    background: var(--white);
+    color: var(--success);
+    border-color: var(--success);
+  }
+
+  .btn-accept:hover {
+    background: var(--success);
+    color: var(--white);
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 #1a5c2e;
+  }
+
+  .btn-reject {
+    background: var(--white);
+    color: var(--danger);
+    border-color: var(--danger);
+  }
+
+  .btn-reject:hover {
+    background: var(--danger);
+    color: var(--white);
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 #7a1a1a;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--white);
+    border: var(--border);
+    box-shadow: var(--shadow);
+    border-radius: 4px;
+  }
+
+  .empty-icon  { font-size: 3rem; display: block; margin-bottom: 1rem; }
+  .empty-title { font-family: var(--pixel); font-size: 0.6rem; color: var(--ink); margin-bottom: 0.5rem; }
+  .empty-sub   { font-family: var(--doodle); font-size: 1.1rem; color: #888; }
+
+  @media (max-width: 560px) {
+    .request-card { flex-direction: column; text-align: center; }
+    .req-actions  { justify-content: center; }
+  }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="friends-container">
-    <h1 class="friends-header">Friend Requests</h1>
+<div class="requests-page">
 
-    {% if friend_requests %}
-        <div class="friends-grid">
-            {% for request in friend_requests %}
-                <div class="friend-card">
-                    {% if request.from_user.profile_picture %}
-                        <img src="{{ request.from_user.profile_picture.url }}" alt="{{ request.from_user.username }}" class="friend-avatar">
-                    {% else %}
-                        <img src="{% static 'images/default_profile.png' %}" alt="Default Avatar" class="friend-avatar">
-                    {% endif %}
+  <div class="page-header">
+    <h1 class="page-title">FRIEND REQUESTS</h1>
+    <a href="{% url 'friend_list' %}" class="btn-back">← My Friends</a>
+  </div>
 
-                    <h3 class="friend-username">{{ request.from_user.username }}</h3>
-                    <p class="friend-detail">Email: {{ request.from_user.email }}</p>
+  {% if friend_requests %}
+  <div class="requests-list">
+    {% for req in friend_requests %}
+    <div class="request-card">
+      {% if req.from_user.profile_picture %}
+        <img src="{{ req.from_user.profile_picture.url }}" alt="{{ req.from_user.username }}" class="req-avatar">
+      {% else %}
+        <img src="{% static 'images/default_profile.png' %}" alt="avatar" class="req-avatar">
+      {% endif %}
 
-                    <div class="friend-actions">
-                        <a href="{% url 'accept_friend_request' request.id %}" class="btn btn-success">Accept</a>
-                        <a href="{% url 'reject_friend_request' request.id %}" class="btn btn-danger">Reject</a>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="no-friends">
-            <p>You have no pending friend requests.</p>
-        </div>
-    {% endif %}
+      <div class="req-info">
+        <div class="req-username">{{ req.from_user.username }}</div>
+        <div class="req-email">{{ req.from_user.email }}</div>
+      </div>
+
+      <div class="req-actions">
+        <a href="{% url 'accept_friend_request' req.id %}" class="btn-accept">✓ Accept</a>
+        <a href="{% url 'reject_friend_request' req.id %}" class="btn-reject">✕ Reject</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="empty-state">
+    <span class="empty-icon">📭</span>
+    <div class="empty-title">NO PENDING REQUESTS</div>
+    <div class="empty-sub">You're all caught up!</div>
+  </div>
+  {% endif %}
+
 </div>
 {% endblock %}

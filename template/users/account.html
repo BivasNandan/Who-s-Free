@@ -1,73 +1,337 @@
+{% extends 'navbar.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Account</title>
+{% block title %}My Account — Who's Free{% endblock %}
 
-    <link rel="stylesheet" href="{% static 'css/account.css' %}">
-    <link rel="stylesheet" href="{% static 'css/my_created_events.css' %}">
-    <link rel="stylesheet" href="{% static 'css/create_event.css' %}">
-    <link rel="stylesheet" href="{% static 'css/delete_event.css' %}">
-    <link rel="stylesheet" href="{% static 'css/my_created_event.css' %}">
-    <link rel="stylesheet" href="{% static 'css/event_list.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    {% block extra_css %}{% endblock %}
-</head>
-<body>
-    <!-- Navbar -->
-    <header>
-        <div class="brand">
-            <h1>WHO'S FREE</h1>
-            <p>You will never have to be alone</p>
-        </div>
-        <nav>
-            <a href="{% url 'friend_list' %}">Friends</a>
-            <a href="{% url 'my_created_events' %}">My Events</a>
-            <a href="{% url 'my_interested_event' %}">My Interested Events</a>
-            <a href="{% url 'events_list' %}">All Events</a>
-            <a href="{% url 'friend_requests' %}">View Friend Request</a>
-            <a href="{% url 'account' %}">
-                {% if user.profile_picture %}
-                    <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="nav-profile-picture">
-                {% else %}
-                    <img src="{% static 'images/default_profile.png' %}" alt="Default Profile Picture" class="nav-profile-picture">
-                {% endif %}
-            </a>
-        </nav>
-    </header>
-    {%block content%}
+{% block extra_css %}
+<style>
+  /* ── PAGE LAYOUT ──────────────────────────────────────────────── */
+  .account-page {
+    max-width: 800px;
+    margin: 2.5rem auto;
+    padding: 0 1.5rem 4rem;
+    animation: fadeUp 0.4s ease both;
+  }
 
-    <!-- Account Details -->
-    <main>
-        <div class="account-container">
-            <div class="account-details">
-                <h1>Welcome, {{ user.first_name }}!</h1>
-                <div class="account-card">
-                    <div class="account-info">
-                        <p><strong>Username:</strong> {{ user.username }}</p>
-                        <p><strong>Email:</strong> {{ user.email }}</p>
-                        <p><strong>Account Type:</strong> {{ user.user_type|title }}</p>
-                        <p><strong>Phone Number:</strong> {{ user.phone_number }}</p>
-                        <p><strong>Bio:</strong> {{ user.bio|default:"No bio available" }}</p>
-                        <p><strong>Interests:</strong> {{ user.interests|default:"No interests added" }}</p>
-                    </div>
-                    <div class="profile-picture">
-                        {% if user.profile_picture %}
-                            <img src="{{ user.profile_picture.url }}" alt="Profile Picture">
-                        {% else %}
-                            <img src="{% static 'images/default_profile.png' %}" alt="Default Profile Picture">
-                        {% endif %}
-                    </div>
-                </div>
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
-                <div class="logout-container">
-                    <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
-                </div>
-        </div>
-    </main>
-    {%endblock%}
-</body>
-</html>
+  /* ── WELCOME HEADER ───────────────────────────────────────────── */
+  .welcome-header {
+    font-family: var(--pixel);
+    font-size: 0.7rem;
+    color: var(--ink);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .welcome-header::after {
+    content: '';
+    flex: 1;
+    height: 3px;
+    background: var(--ink);
+  }
+
+  /* ── PROFILE CARD ─────────────────────────────────────────────── */
+  .profile-card {
+    background: var(--white);
+    border: 3px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--ink);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ── CARD TOP — avatar + name ─────────────────────────────────── */
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border-bottom: 3px solid var(--ink);
+    background: var(--paper);
+  }
+
+  .avatar-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .avatar-img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 3px solid var(--ink);
+    box-shadow: 3px 3px 0 var(--ink);
+    object-fit: cover;
+    display: block;
+  }
+
+  /* online ring */
+  .avatar-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: 4px; right: 4px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--success);
+    border: 3px solid var(--white);
+    animation: onlinePulse 2s infinite;
+  }
+
+  @keyframes onlinePulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(45,198,83,0.4); }
+    50%       { box-shadow: 0 0 0 6px rgba(45,198,83,0); }
+  }
+
+  .card-top-info { flex: 1; }
+
+  .profile-name {
+    font-family: var(--pixel);
+    font-size: 0.65rem;
+    color: var(--ink);
+    margin-bottom: 6px;
+    line-height: 1.6;
+  }
+
+  .profile-type {
+    display: inline-block;
+    font-family: var(--doodle);
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 3px 12px;
+    border: 2px solid var(--ink);
+    border-radius: 20px;
+    background: var(--ink);
+    color: var(--white);
+  }
+
+  /* ── CARD BODY — info rows ────────────────────────────────────── */
+  .card-body { padding: 1.25rem 1.5rem; }
+
+  .info-row {
+    display: flex;
+    gap: 1rem;
+    padding: 10px 0;
+    border-bottom: 2px dashed #ddd;
+    align-items: flex-start;
+  }
+
+  .info-row:last-child { border-bottom: none; }
+
+  .info-label {
+    font-family: var(--pixel);
+    font-size: 0.42rem;
+    color: #888;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    min-width: 110px;
+    padding-top: 3px;
+    flex-shrink: 0;
+  }
+
+  .info-value {
+    font-family: var(--doodle);
+    font-size: 1.05rem;
+    color: var(--ink);
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .info-value.empty { color: #aaa; font-weight: 400; font-style: italic; }
+
+  /* ── ACTION BUTTONS ───────────────────────────────────────────── */
+  .action-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+
+  .btn-action {
+    font-family: var(--doodle);
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 10px 20px;
+    border: 3px solid var(--ink);
+    border-radius: 2px;
+    text-decoration: none;
+    display: inline-block;
+    transition: transform 0.1s, box-shadow 0.1s;
+    cursor: pointer;
+    background: none;
+  }
+
+  .btn-action:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--ink);
+  }
+
+  .btn-action:active {
+    transform: translate(1px, 1px);
+    box-shadow: none;
+  }
+
+  .btn-primary { background: var(--ink); color: var(--white) !important; }
+  .btn-danger  { border-color: var(--danger); color: var(--danger) !important; }
+  .btn-danger:hover { background: var(--danger); color: var(--white) !important; box-shadow: 4px 4px 0 #7a1a1a; }
+
+  /* ── QUICK LINKS ──────────────────────────────────────────────── */
+  .quick-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin-top: 1.5rem;
+  }
+
+  .quick-link {
+    background: var(--white);
+    border: 3px solid var(--ink);
+    box-shadow: 4px 4px 0 var(--ink);
+    border-radius: 4px;
+    padding: 1rem;
+    text-decoration: none;
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+
+  .quick-link:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--ink);
+    color: var(--ink);
+  }
+
+  .quick-link-icon {
+    font-size: 1.4rem;
+    line-height: 1;
+  }
+
+  .quick-link-label {
+    font-family: var(--doodle);
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .quick-link-sub {
+    font-family: var(--doodle);
+    font-size: 0.85rem;
+    color: #888;
+  }
+
+  /* ── RESPONSIVE ───────────────────────────────────────────────── */
+  @media (max-width: 560px) {
+    .card-top { flex-direction: column; text-align: center; }
+    .info-label { min-width: 80px; }
+    .action-row { flex-direction: column; }
+    .btn-action { text-align: center; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="account-page">
+
+  <!-- WELCOME HEADER -->
+  <div class="welcome-header">
+    WELCOME BACK, {{ user.first_name|upper|default:user.username|upper }}
+  </div>
+
+  <!-- PROFILE CARD -->
+  <div class="profile-card">
+
+    <!-- TOP: avatar + name + type -->
+    <div class="card-top">
+      <div class="avatar-wrap">
+        {% if user.profile_picture %}
+          <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="avatar-img">
+        {% else %}
+          <img src="{% static 'images/default_profile.png' %}" alt="Default" class="avatar-img">
+        {% endif %}
+      </div>
+      <div class="card-top-info">
+        <div class="profile-name">{{ user.username }}</div>
+        <span class="profile-type">{{ user.user_type|title }}</span>
+      </div>
+    </div>
+
+    <!-- BODY: info rows -->
+    <div class="card-body">
+      <div class="info-row">
+        <span class="info-label">Email</span>
+        <span class="info-value">{{ user.email }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Phone</span>
+        <span class="info-value {% if not user.phone_number %}empty{% endif %}">
+          {{ user.phone_number|default:"Not added yet" }}
+        </span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Bio</span>
+        <span class="info-value {% if not user.bio %}empty{% endif %}">
+          {{ user.bio|default:"No bio yet — tell people who you are!" }}
+        </span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Interests</span>
+        <span class="info-value {% if not user.interests %}empty{% endif %}">
+          {{ user.interests|default:"No interests added yet" }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTION BUTTONS -->
+  <div class="action-row">
+    {% if user.user_type == 'individual' %}
+      <a href="{% url 'individual_profile_setup' %}" class="btn-action btn-primary">✏ Edit Profile</a>
+    {% else %}
+      <a href="{% url 'business_profile_setup' %}" class="btn-action btn-primary">✏ Edit Profile</a>
+    {% endif %}
+    <a href="{% url 'logout' %}" class="btn-action btn-danger">Logout</a>
+  </div>
+
+  <!-- QUICK LINKS -->
+  <div class="quick-links">
+    <a href="{% url 'events_list' %}" class="quick-link">
+      <span class="quick-link-icon">📅</span>
+      <span class="quick-link-label">All Events</span>
+      <span class="quick-link-sub">Discover what's on</span>
+    </a>
+    <a href="{% url 'my_created_events' %}" class="quick-link">
+      <span class="quick-link-icon">⭐</span>
+      <span class="quick-link-label">My Events</span>
+      <span class="quick-link-sub">Events you created</span>
+    </a>
+    <a href="{% url 'my_interested_event' %}" class="quick-link">
+      <span class="quick-link-icon">🎯</span>
+      <span class="quick-link-label">Interested</span>
+      <span class="quick-link-sub">Events you want to go</span>
+    </a>
+    <a href="{% url 'friend_list' %}" class="quick-link">
+      <span class="quick-link-icon">🤝</span>
+      <span class="quick-link-label">Friends</span>
+      <span class="quick-link-sub">Your people</span>
+    </a>
+    <a href="{% url 'friend_requests' %}" class="quick-link">
+      <span class="quick-link-icon">📬</span>
+      <span class="quick-link-label">Requests</span>
+      <span class="quick-link-sub">
+        {% if pending_requests > 0 %}
+          {{ pending_requests }} pending!
+        {% else %}
+          No pending requests
+        {% endif %}
+      </span>
+    </a>
+  </div>
+
+</div>
+{% endblock %}

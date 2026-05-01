@@ -1,35 +1,328 @@
-{% extends 'navbar.html'%}
+{% extends 'navbar.html' %}
 {% load static %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/login.css' %}">
+<style>
+  .login-page {
+    min-height: calc(100vh - 68px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    gap: 3rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .mascot-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    flex-shrink: 0;
+    animation: floatIn 0.6s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+
+  @keyframes floatIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .mascot-panel svg {
+    filter: drop-shadow(4px 4px 0px var(--ink));
+    animation: bob 3s ease-in-out infinite;
+  }
+
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-8px); }
+  }
+
+  .mascot-speech {
+    background: var(--white);
+    border: var(--border);
+    box-shadow: var(--shadow);
+    border-radius: 0 16px 16px 16px;
+    padding: 10px 16px;
+    font-family: var(--doodle);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    max-width: 200px;
+    text-align: center;
+    position: relative;
+    animation: floatIn 0.6s 0.2s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+
+  .mascot-speech::before {
+    content: '';
+    position: absolute;
+    top: -14px; left: 0;
+    border: 7px solid transparent;
+    border-bottom-color: var(--ink);
+  }
+
+  .mascot-speech::after {
+    content: '';
+    position: absolute;
+    top: -10px; left: 2px;
+    border: 5px solid transparent;
+    border-bottom-color: var(--white);
+  }
+
+  .login-card {
+    background: var(--white);
+    border: var(--border);
+    box-shadow: 6px 6px 0px var(--ink);
+    border-radius: 4px;
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 380px;
+    flex-shrink: 0;
+    animation: slideUp 0.5s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-title {
+    font-family: var(--pixel);
+    font-size: 0.75rem;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+    letter-spacing: 0.05em;
+  }
+
+  .card-sub {
+    font-family: var(--doodle);
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px dashed #ccc;
+  }
+
+  .field-group { margin-bottom: 1.25rem; }
+
+  .field-group label {
+    display: block;
+    font-family: var(--doodle);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .field-group input {
+    width: 100%;
+    padding: 10px 44px 10px 12px;
+    font-family: var(--doodle);
+    font-size: 1rem;
+    border: var(--border);
+    background: var(--paper);
+    color: var(--ink);
+    outline: none;
+    border-radius: 2px;
+    transition: box-shadow 0.15s, background 0.15s;
+  }
+
+  .field-group input:focus {
+    background: var(--white);
+    box-shadow: var(--shadow);
+  }
+
+  .toggle-vis {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: #888;
+    font-family: var(--doodle);
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: color 0.15s;
+  }
+  .toggle-vis:hover { color: var(--ink); }
+
+  .error-msg {
+    font-family: var(--doodle);
+    font-size: 0.95rem;
+    color: var(--danger);
+    margin-top: 5px;
+    padding: 6px 10px;
+    border: 2px solid var(--danger);
+    background: #fff0f0;
+    animation: shake 0.4s ease;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%       { transform: translateX(-6px); }
+    40%       { transform: translateX(6px); }
+    60%       { transform: translateX(-4px); }
+    80%       { transform: translateX(4px); }
+  }
+
+  .btn-login {
+    width: 100%;
+    padding: 12px;
+    margin-top: 0.5rem;
+    background: var(--ink);
+    color: var(--white);
+    font-family: var(--pixel);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    border: var(--border);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: transform 0.1s, box-shadow 0.1s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-login:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+
+  .btn-login:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+
+  .btn-login::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(255,255,255,0.04) 2px, rgba(255,255,255,0.04) 4px
+    );
+    pointer-events: none;
+  }
+
+  .register-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-family: var(--doodle);
+    font-size: 1rem;
+    color: #666;
+    border-top: 2px dashed #ccc;
+    padding-top: 1rem;
+  }
+
+  .register-link a {
+    color: var(--accent);
+    font-weight: 700;
+    text-decoration: none;
+    border-bottom: 2px solid var(--accent);
+    padding: 0 2px;
+    transition: background 0.15s;
+  }
+
+  .register-link a:hover {
+    background: var(--accent);
+    color: var(--white);
+  }
+
+  @media (max-width: 700px) {
+    .mascot-panel { display: none; }
+    .login-page { padding: 1.5rem 1rem; }
+  }
+</style>
 {% endblock %}
 
-{% block body_class %}login-page{% endblock %}
-
 {% block content %}
+<div class="login-page">
 
-<div class="wrapper">
-    <form method="post">
-        {% csrf_token %}
-        <h1>Login</h1>
+  <div class="mascot-panel">
+    <svg width="140" height="180" viewBox="0 0 140 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="45" y="90" width="50" height="60" rx="4" fill="white" stroke="#111" stroke-width="3"/>
+      <circle cx="70" cy="72" r="28" fill="white" stroke="#111" stroke-width="3"/>
+      <circle cx="61" cy="70" r="5" fill="#111"/>
+      <circle cx="79" cy="70" r="5" fill="#111"/>
+      <circle cx="63" cy="68" r="2" fill="white"/>
+      <circle cx="81" cy="68" r="2" fill="white"/>
+      <path d="M62 82 Q70 78 78 82" stroke="#111" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <line x1="45" y1="105" x2="25" y2="125" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+      <line x1="95" y1="105" x2="115" y2="125" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+      <line x1="58" y1="150" x2="52" y2="172" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+      <line x1="82" y1="150" x2="88" y2="172" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+      <ellipse cx="95" cy="60" rx="4" ry="6" fill="#3a6bff" opacity="0.7"/>
+      <path d="M95 54 L98 60 L92 60 Z" fill="#3a6bff" opacity="0.7"/>
+    </svg>
+    <div class="mascot-speech">oh hey...<br>you came back 👀</div>
+  </div>
 
-        <div class="input-box">
-            {{ form.username.label_tag }}
-            {{ form.username }}
+  <div class="login-card">
+    <div class="card-title">WHO'S FREE</div>
+    <div class="card-sub">welcome back, let's find your people</div>
+
+    <form method="post" id="loginForm">
+      {% csrf_token %}
+
+      <div class="field-group">
+        {{ form.username.label_tag }}
+        <div class="input-wrap">{{ form.username }}</div>
+        {% if form.username.errors %}
+          <div class="error-msg">{{ form.username.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+
+      <div class="field-group">
+        {{ form.password.label_tag }}
+        <div class="input-wrap">
+          {{ form.password }}
+          <button type="button" class="toggle-vis" id="togglePw" onclick="togglePassword()">show</button>
         </div>
+        {% if form.password.errors %}
+          <div class="error-msg">{{ form.password.errors|join:", " }}</div>
+        {% endif %}
+      </div>
 
-        <div class="input-box">
-            {{ form.password.label_tag }}
-            {{ form.password }}
+      {% if form.non_field_errors %}
+        <div class="error-msg" style="margin-bottom:1rem;">
+          {{ form.non_field_errors|join:", " }}
         </div>
+      {% endif %}
 
-        <button type="submit" class="btn">Login</button>
-
-        <div class="register-link">
-            <p>Don't have an account? Register <a href="{% url 'choose_user_type' %}">here</a></p>
-        </div>
+      <button type="submit" class="btn-login">▶ LOGIN</button>
     </form>
+
+    <div class="register-link">
+      Don't have an account? <a href="{% url 'choose_user_type' %}">Sign up here</a>
+    </div>
+  </div>
+
 </div>
 
+<script>
+  function togglePassword() {
+    const pw  = document.getElementById('id_password');
+    const btn = document.getElementById('togglePw');
+    if (pw.type === 'password') { pw.type = 'text'; btn.textContent = 'hide'; }
+    else { pw.type = 'password'; btn.textContent = 'show'; }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const hasError = document.querySelector('.error-msg');
+    if (hasError) {
+      const card = document.querySelector('.login-card');
+      card.style.animation = 'none';
+      card.offsetHeight;
+      card.style.animation = 'shake 0.4s ease';
+    }
+  });
+</script>
 {% endblock %}

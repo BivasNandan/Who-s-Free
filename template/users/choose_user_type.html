@@ -1,14 +1,156 @@
 {% extends 'navbar.html' %}
+{% load static %}
+
+{% block title %}Join Who's Free{% endblock %}
+
+{% block extra_css %}
+<style>
+  .choose-page {
+    min-height: calc(100vh - 68px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+
+  .choose-card {
+    background: var(--white);
+    border: var(--border);
+    box-shadow: 6px 6px 0 var(--ink);
+    border-radius: 4px;
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 440px;
+    animation: slideUp 0.5s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .choose-title {
+    font-family: var(--pixel);
+    font-size: 0.65rem;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.05em;
+  }
+
+  .choose-sub {
+    font-family: var(--doodle);
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px dashed #ccc;
+  }
+
+  .type-options {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .type-btn {
+    width: 100%;
+    padding: 1.2rem 1.5rem;
+    background: var(--white);
+    border: var(--border);
+    box-shadow: var(--shadow);
+    border-radius: 4px;
+    font-family: var(--doodle);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: transform 0.1s, box-shadow 0.1s, background 0.15s;
+  }
+
+  .type-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0 var(--ink);
+    background: var(--paper);
+  }
+
+  .type-btn:active {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+
+  .type-btn.black {
+    background: var(--ink);
+    color: var(--white);
+  }
+
+  .type-btn.black:hover {
+    background: #333;
+  }
+
+  .type-icon { font-size: 1.6rem; flex-shrink: 0; }
+
+  .type-info { display: flex; flex-direction: column; gap: 2px; }
+  .type-name { font-size: 1.1rem; font-weight: 700; }
+  .type-desc { font-size: 0.9rem; font-weight: 400; opacity: 0.7; }
+
+  .login-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-family: var(--doodle);
+    font-size: 1rem;
+    color: #666;
+    border-top: 2px dashed #ccc;
+    padding-top: 1rem;
+  }
+
+  .login-link a {
+    color: var(--accent);
+    font-weight: 700;
+    text-decoration: none;
+    border-bottom: 2px solid var(--accent);
+    padding: 0 2px;
+  }
+
+  .login-link a:hover {
+    background: var(--accent);
+    color: var(--white);
+  }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="main-wrapper">
-    <div class="signup-form">
-        <h1>Choose Your Account Type</h1>
-        <form method="post">
-            {% csrf_token %}
-            <button type="submit" name="user_type" value="individual" class="primary-btn">I'm an Individual</button>
-            <button type="submit" name="user_type" value="business" class="primary-btn">I'm a Business</button>
-        </form>
+<div class="choose-page">
+  <div class="choose-card">
+    <div class="choose-title">JOIN WHO'S FREE</div>
+    <div class="choose-sub">who are you? pick one to get started</div>
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="type-options">
+        <button type="submit" name="user_type" value="individual" class="type-btn">
+          <span class="type-icon">🙋</span>
+          <div class="type-info">
+            <span class="type-name">I'm an Individual</span>
+            <span class="type-desc">Find events & make friends</span>
+          </div>
+        </button>
+        <button type="submit" name="user_type" value="business" class="type-btn black">
+          <span class="type-icon">🏢</span>
+          <div class="type-info">
+            <span class="type-name">I'm a Business</span>
+            <span class="type-desc">Create & promote events</span>
+          </div>
+        </button>
+      </div>
+    </form>
+
+    <div class="login-link">
+      Already have an account? <a href="{% url 'login' %}">Log in here</a>
     </div>
+  </div>
 </div>
 {% endblock %}

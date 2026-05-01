@@ -1,67 +1,413 @@
-{% extends 'users/account.html' %}
+{% extends 'navbar.html' %}
 {% load static %}
 
+{% block title %}Events — Who's Free{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* ── PAGE ─────────────────────────────────────────────────────── */
+  .events-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* ── HEADER ───────────────────────────────────────────────────── */
+  .events-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .events-title {
+    font-family: var(--pixel);
+    font-size: 0.8rem;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+  }
+
+  .btn-create {
+    font-family: var(--doodle);
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 10px 18px;
+    background: var(--ink);
+    color: var(--white);
+    border: var(--border);
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    border-radius: 2px;
+    transition: transform 0.1s, box-shadow 0.1s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-create:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--ink);
+    color: var(--white);
+  }
+
+  /* ── FILTER BAR ───────────────────────────────────────────────── */
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px dashed #ccc;
+  }
+
+  .filter-btn {
+    font-family: var(--doodle);
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 5px 14px;
+    border: 2px solid var(--ink);
+    border-radius: 20px;
+    background: var(--white);
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .filter-btn:hover,
+  .filter-btn.active {
+    background: var(--ink);
+    color: var(--white);
+  }
+
+  /* ── EVENT GRID ───────────────────────────────────────────────── */
+  .event-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+  }
+
+  /* ── EVENT CARD ───────────────────────────────────────────────── */
+  .event-card {
+    background: var(--white);
+    border: var(--border);
+    box-shadow: var(--shadow);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.15s, box-shadow 0.15s;
+    animation: cardIn 0.4s ease both;
+  }
+
+  .event-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0 var(--ink);
+  }
+
+  /* stagger animation */
+  .event-card:nth-child(1) { animation-delay: 0ms; }
+  .event-card:nth-child(2) { animation-delay: 60ms; }
+  .event-card:nth-child(3) { animation-delay: 120ms; }
+  .event-card:nth-child(4) { animation-delay: 180ms; }
+  .event-card:nth-child(5) { animation-delay: 240ms; }
+  .event-card:nth-child(6) { animation-delay: 300ms; }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── BANNER ───────────────────────────────────────────────────── */
+  .event-banner {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-bottom: var(--border);
+    display: block;
+  }
+
+  .event-banner-placeholder {
+    width: 100%;
+    height: 160px;
+    background: var(--paper);
+    border-bottom: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+  }
+
+  /* ── CARD BODY ────────────────────────────────────────────────── */
+  .event-body {
+    padding: 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+
+  /* ── CATEGORY BADGE ───────────────────────────────────────────── */
+  .event-category {
+    display: inline-block;
+    font-family: var(--doodle);
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 20px;
+    border: 2px solid var(--ink);
+    width: fit-content;
+  }
+
+  /* colour accents per category */
+  .cat-music      { background: #fde8cc; border-color: #e67e22; color: #a35900; }
+  .cat-sports     { background: #e8f8ee; border-color: #27ae60; color: #1a5c2e; }
+  .cat-art        { background: #f5ecfe; border-color: #9b59b6; color: #6a2d9b; }
+  .cat-food       { background: #ffeee8; border-color: #e74c3c; color: #7a1a1a; }
+  .cat-tech       { background: #eef3ff; border-color: #3a6bff; color: #1a2e7a; }
+  .cat-education  { background: #fffbe8; border-color: #f1c40f; color: #7a6200; }
+  .cat-networking { background: #e8f8f8; border-color: #1abc9c; color: #0a5c4e; }
+  .cat-other      { background: var(--paper); border-color: var(--ink); color: var(--ink); }
+
+  /* ── EVENT NAME ───────────────────────────────────────────────── */
+  .event-name {
+    font-family: var(--doodle);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+
+  .event-desc {
+    font-family: var(--doodle);
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.5;
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ── DETAILS ──────────────────────────────────────────────────── */
+  .event-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-top: 2px dashed #ddd;
+    padding-top: 8px;
+    margin-top: 4px;
+  }
+
+  .event-detail {
+    font-family: var(--doodle);
+    font-size: 0.9rem;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .detail-icon { font-style: normal; flex-shrink: 0; }
+
+  /* ── CARD FOOTER ──────────────────────────────────────────────── */
+  .event-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 1.1rem;
+    border-top: var(--border);
+    background: var(--paper);
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .interested-count {
+    font-family: var(--doodle);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .interested-pill {
+    background: var(--warn);
+    color: var(--ink);
+    font-family: var(--pixel);
+    font-size: 0.4rem;
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 2px solid var(--ink);
+  }
+
+  .btn-interested {
+    font-family: var(--doodle);
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 6px 14px;
+    background: var(--white);
+    color: var(--ink);
+    border: 2px solid var(--ink);
+    border-radius: 2px;
+    text-decoration: none;
+    transition: transform 0.1s, box-shadow 0.1s, background 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .btn-interested:hover {
+    background: var(--ink);
+    color: var(--white);
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+
+  .btn-interested.already {
+    background: var(--warn);
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  /* ── EMPTY STATE ──────────────────────────────────────────────── */
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--white);
+    border: var(--border);
+    box-shadow: var(--shadow);
+    border-radius: 4px;
+  }
+
+  .empty-icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
+
+  .empty-title {
+    font-family: var(--pixel);
+    font-size: 0.65rem;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-sub {
+    font-family: var(--doodle);
+    font-size: 1.1rem;
+    color: #888;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ── RESPONSIVE ───────────────────────────────────────────────── */
+  @media (max-width: 600px) {
+    .event-grid { grid-template-columns: 1fr; }
+    .events-title { font-size: 0.6rem; }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="event-page-wrapper">
-  <div class="events-container">
-    <div class="events-header">
-      <h1 class="events-title">Upcoming Events</h1>
-      <a class="btn-create" href="{% url 'create_event' %}">
-        <i class="fas fa-plus"></i> Create Event
-      </a>
-    </div>
+<div class="events-page">
 
-    <div class="event-list">
-      {% for event in events %}
-      <div class="event-card">
-        {% if event.banner %}
-        <img src="{{ event.banner.url }}" alt="{{ event.name }} banner" class="event-banner">
-        {% else %}
-        <div class="event-banner placeholder">
-          <i class="fas fa-calendar-alt"></i>
-        </div>
-        {% endif %}
-
-        <div class="event-content">
-          <span class="event-category category-{{ event.category|lower }}">{{ event.get_category_display }}</span>
-          <h3 class="event-title">{{ event.name }}</h3>
-          <p class="event-description">{{ event.description }}</p>
-
-          <div class="event-details">
-            <div class="event-detail">
-              <i class="fas fa-map-marker-alt"></i>
-              <span>{{ event.location }}</span>
-            </div>
-            <div class="event-detail">
-              <i class="fas fa-calendar-day"></i>
-              <span>{{ event.start_time|date:"M d, Y" }}</span>
-            </div>
-            <div class="event-detail">
-              <i class="fas fa-clock"></i>
-              <span>{{ event.start_time|date:"h:i A" }} - {{ event.end_time|date:"h:i A" }}</span>
-            </div>
-            <div class="event-detail">
-              <i class="fas fa-user"></i>
-              <span>Organizer: {{ event.user.username }}</span>
-            </div>
-          </div>
-
-          <div class="event-actions">
-            {% if event.user != user %}
-            <a href="{% url 'mark_interested' event.id %}" class="btn-interested">
-              <i class="fas fa-star"></i> Interested
-            </a>
-            {% endif %}
-            <span>{{ event.interested_users.count }} interested</span>
-          </div>
-        </div>
-      </div>
-      {% empty %}
-      <div class="no-events">
-        <p>No events available. Be the first to create one!</p>
-      </div>
-      {% endfor %}
-    </div>
+  <!-- HEADER -->
+  <div class="events-header">
+    <h1 class="events-title">UPCOMING EVENTS</h1>
+    {% if user.is_authenticated %}
+    <a href="{% url 'create_event' %}" class="btn-create">+ Create Event</a>
+    {% endif %}
   </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterEvents('all', this)">All</button>
+    <button class="filter-btn" onclick="filterEvents('music', this)">Music</button>
+    <button class="filter-btn" onclick="filterEvents('sports', this)">Sports</button>
+    <button class="filter-btn" onclick="filterEvents('art', this)">Art</button>
+    <button class="filter-btn" onclick="filterEvents('food', this)">Food</button>
+    <button class="filter-btn" onclick="filterEvents('tech', this)">Tech</button>
+    <button class="filter-btn" onclick="filterEvents('education', this)">Education</button>
+    <button class="filter-btn" onclick="filterEvents('networking', this)">Networking</button>
+    <button class="filter-btn" onclick="filterEvents('other', this)">Other</button>
+  </div>
+
+  <!-- EVENT GRID -->
+  <div class="event-grid" id="eventGrid">
+    {% for event in events %}
+    <div class="event-card" data-category="{{ event.category|lower }}">
+
+      <!-- BANNER -->
+      {% if event.banner %}
+        <img src="{{ event.banner.url }}" alt="{{ event.name }}" class="event-banner">
+      {% else %}
+        <div class="event-banner-placeholder">📅</div>
+      {% endif %}
+
+      <!-- BODY -->
+      <div class="event-body">
+        <span class="event-category cat-{{ event.category|lower }}">
+          {{ event.get_category_display }}
+        </span>
+        <div class="event-name">{{ event.name }}</div>
+        <div class="event-desc">{{ event.description }}</div>
+
+        <div class="event-details">
+          <div class="event-detail">
+            <span class="detail-icon">📍</span> {{ event.location|default:"Location TBA" }}
+          </div>
+          <div class="event-detail">
+            <span class="detail-icon">📅</span> {{ event.start_time|date:"M d, Y" }}
+          </div>
+          <div class="event-detail">
+            <span class="detail-icon">🕐</span>
+            {{ event.start_time|date:"h:i A" }} — {{ event.end_time|date:"h:i A" }}
+          </div>
+          <div class="event-detail">
+            <span class="detail-icon">👤</span> {{ event.user.username }}
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="event-footer">
+        <div class="interested-count">
+          <span class="interested-pill">{{ event.interested_users.count }}</span>
+          interested
+        </div>
+        {% if user.is_authenticated and event.user != user %}
+          <a href="{% url 'mark_interested' event.id %}" class="btn-interested">
+            + Interested
+          </a>
+        {% endif %}
+      </div>
+
+    </div>
+    {% empty %}
+    <div class="empty-state">
+      <span class="empty-icon">📭</span>
+      <div class="empty-title">NO EVENTS YET</div>
+      <div class="empty-sub">Be the first to create one!</div>
+      {% if user.is_authenticated %}
+        <a href="{% url 'create_event' %}" class="btn-create">+ Create Event</a>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
 </div>
+
+<script>
+  function filterEvents(cat, btn) {
+    // update active button
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // show/hide cards
+    document.querySelectorAll('.event-card').forEach(card => {
+      const match = cat === 'all' || card.dataset.category === cat;
+      card.style.display = match ? '' : 'none';
+    });
+  }
+</script>
 {% endblock %}

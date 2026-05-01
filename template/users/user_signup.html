@@ -1,56 +1,405 @@
-{% extends 'navbar.html'%}
+{% extends 'navbar.html' %}
 {% load static %}
 
+{% block title %}Sign Up — Who's Free{% endblock %}
+
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/login.css' %}">
+<style>
+  .signup-page {
+    min-height: calc(100vh - 68px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2.5rem 1rem 4rem;
+  }
+
+  .signup-card {
+    background: var(--white);
+    border: var(--border);
+    box-shadow: 6px 6px 0 var(--ink);
+    border-radius: 4px;
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 480px;
+    animation: slideUp 0.5s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-title {
+    font-family: var(--pixel);
+    font-size: 0.65rem;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.05em;
+  }
+
+  .card-sub {
+    font-family: var(--doodle);
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px dashed #ccc;
+  }
+
+  /* ── NAME ROW ─────────────────────────────────────────────────── */
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* ── FIELDS ───────────────────────────────────────────────────── */
+  .field-group { margin-bottom: 1.1rem; }
+
+  .field-group label {
+    display: block;
+    font-family: var(--doodle);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 5px;
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .field-group input {
+    width: 100%;
+    padding: 10px 44px 10px 12px;
+    font-family: var(--doodle);
+    font-size: 1rem;
+    border: var(--border);
+    background: var(--paper);
+    color: var(--ink);
+    outline: none;
+    border-radius: 2px;
+    transition: box-shadow 0.15s, background 0.15s;
+  }
+
+  .field-group input:focus {
+    background: var(--white);
+    box-shadow: var(--shadow);
+  }
+
+  .field-group input.input-error { border-color: var(--danger); }
+  .field-group input.input-ok    { border-color: var(--success); }
+
+  /* ── SHOW/HIDE ────────────────────────────────────────────────── */
+  .toggle-vis {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: #888;
+    font-family: var(--doodle);
+    font-size: 0.85rem;
+    font-weight: 700;
+    transition: color 0.15s;
+  }
+  .toggle-vis:hover { color: var(--ink); }
+
+  /* ── ERRORS ───────────────────────────────────────────────────── */
+  .error-list {
+    margin-top: 5px;
+    list-style: none;
+  }
+
+  .error-list li {
+    font-family: var(--doodle);
+    font-size: 0.9rem;
+    color: var(--danger);
+    padding: 4px 8px;
+    border-left: 3px solid var(--danger);
+    background: #fff0f0;
+    margin-bottom: 3px;
+  }
+
+  /* ── PASSWORD STRENGTH ────────────────────────────────────────── */
+  .strength-wrap { margin-top: 8px; }
+
+  .strength-bar-row {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+
+  .strength-seg {
+    height: 5px;
+    flex: 1;
+    border-radius: 3px;
+    background: #ddd;
+    transition: background 0.2s;
+  }
+
+  .strength-label {
+    font-family: var(--doodle);
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 6px;
+  }
+
+  .rules-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3px;
+  }
+
+  .rule {
+    font-family: var(--doodle);
+    font-size: 0.85rem;
+    color: #aaa;
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.5;
+    transition: color 0.2s;
+  }
+
+  .rule::before {
+    content: '○';
+    position: absolute;
+    left: 0;
+    transition: all 0.2s;
+  }
+
+  .rule.ok { color: var(--ink); font-weight: 600; }
+  .rule.ok::before { content: '●'; color: var(--success); }
+
+  /* ── CONFIRM MATCH ────────────────────────────────────────────── */
+  .match-msg {
+    font-family: var(--doodle);
+    font-size: 0.85rem;
+    margin-top: 5px;
+    padding: 4px 8px;
+    border-left: 3px solid;
+    display: none;
+  }
+
+  .match-msg.ok    { border-color: var(--success); color: var(--success); background: #f0fff4; display: block; }
+  .match-msg.error { border-color: var(--danger);  color: var(--danger);  background: #fff0f0; display: block; }
+
+  /* ── SUBMIT ───────────────────────────────────────────────────── */
+  .btn-signup {
+    width: 100%;
+    padding: 13px;
+    margin-top: 1rem;
+    background: var(--ink);
+    color: var(--white);
+    font-family: var(--pixel);
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    border: var(--border);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: transform 0.1s, box-shadow 0.1s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-signup:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+
+  .btn-signup:active {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+
+  .btn-signup::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(255,255,255,0.04) 2px, rgba(255,255,255,0.04) 4px
+    );
+    pointer-events: none;
+  }
+
+  .login-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-family: var(--doodle);
+    font-size: 1rem;
+    color: #666;
+    border-top: 2px dashed #ccc;
+    padding-top: 1rem;
+  }
+
+  .login-link a {
+    color: var(--accent);
+    font-weight: 700;
+    text-decoration: none;
+    border-bottom: 2px solid var(--accent);
+    padding: 0 2px;
+  }
+
+  .login-link a:hover {
+    background: var(--accent);
+    color: var(--white);
+  }
+
+  @media (max-width: 500px) {
+    .field-row   { grid-template-columns: 1fr; }
+    .rules-list  { grid-template-columns: 1fr; }
+  }
+</style>
 {% endblock %}
 
-{% block body_class %}login-page{% endblock %}
-
 {% block content %}
+<div class="signup-page">
+  <div class="signup-card">
+    <div class="card-title">CREATE ACCOUNT</div>
+    <div class="card-sub">let's get you set up — takes 30 seconds</div>
 
-<div class="wrapper">
-    <form method="post">
-        {% csrf_token %}
-        <h1>Create Your Account</h1>
+    <form method="post" id="signupForm">
+      {% csrf_token %}
 
-        <div class="input-box">
-            {{ form.first_name.label_tag }}
-            {{ form.first_name }}
+      <!-- NAME ROW -->
+      <div class="field-row">
+        <div class="field-group">
+          {{ form.first_name.label_tag }}
+          <div class="input-wrap">{{ form.first_name }}</div>
+          {% if form.first_name.errors %}
+            <ul class="error-list">{% for e in form.first_name.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+          {% endif %}
         </div>
-
-        <div class="input-box">
-            {{ form.last_name.label_tag }}
-            {{ form.last_name }}
+        <div class="field-group">
+          {{ form.last_name.label_tag }}
+          <div class="input-wrap">{{ form.last_name }}</div>
+          {% if form.last_name.errors %}
+            <ul class="error-list">{% for e in form.last_name.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+          {% endif %}
         </div>
+      </div>
 
-        <div class="input-box">
-              {{ form.username.label_tag }}
-              {{ form.username }}
+      <!-- USERNAME -->
+      <div class="field-group">
+        {{ form.username.label_tag }}
+        <div class="input-wrap">{{ form.username }}</div>
+        {% if form.username.errors %}
+          <ul class="error-list">{% for e in form.username.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+        {% endif %}
+      </div>
+
+      <!-- EMAIL -->
+      <div class="field-group">
+        {{ form.email.label_tag }}
+        <div class="input-wrap">{{ form.email }}</div>
+        {% if form.email.errors %}
+          <ul class="error-list">{% for e in form.email.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+        {% endif %}
+      </div>
+
+      <!-- PASSWORD + STRENGTH METER -->
+      <div class="field-group">
+        {{ form.password1.label_tag }}
+        <div class="input-wrap">
+          {{ form.password1 }}
+          <button type="button" class="toggle-vis" onclick="toggleVis('id_password1', this)">show</button>
         </div>
+        {% if form.password1.errors %}
+          <ul class="error-list">{% for e in form.password1.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+        {% endif %}
 
-        <div class="input-box">
-             {{ form.email.label_tag }}
-             {{ form.email }}
+        <!-- LIVE STRENGTH METER -->
+        <div class="strength-wrap">
+          <div class="strength-bar-row">
+            <div class="strength-seg" id="seg1"></div>
+            <div class="strength-seg" id="seg2"></div>
+            <div class="strength-seg" id="seg3"></div>
+            <div class="strength-seg" id="seg4"></div>
+          </div>
+          <div class="strength-label" id="strengthLabel">strength: —</div>
+          <div class="rules-list">
+            <div class="rule" id="r-len">8+ characters</div>
+            <div class="rule" id="r-up">Uppercase letter</div>
+            <div class="rule" id="r-low">Lowercase letter</div>
+            <div class="rule" id="r-num">Number (0–9)</div>
+            <div class="rule" id="r-sp">Special char (!@#…)</div>
+            <div class="rule" id="r-long">12+ chars (bonus)</div>
+          </div>
         </div>
+      </div>
 
-        <div class="input-box">
-              {{ form.password1.label_tag }}
-              {{ form.password1 }}
+      <!-- CONFIRM PASSWORD -->
+      <div class="field-group">
+        {{ form.password2.label_tag }}
+        <div class="input-wrap">
+          {{ form.password2 }}
+          <button type="button" class="toggle-vis" onclick="toggleVis('id_password2', this)">show</button>
         </div>
+        {% if form.password2.errors %}
+          <ul class="error-list">{% for e in form.password2.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+        {% endif %}
+        <div class="match-msg" id="matchMsg"></div>
+      </div>
 
-        <div class="input-box">
-               {{ form.password2.label_tag }}
-               {{ form.password2 }}
-        </div>
-
-
-        <button type="submit" class="btn">Sign Up</button>
-
-        <div class="register-link">
-            <p>Already have an account? <a href="{% url 'login' %}">Log In</a></p>
-        </div>
+      <button type="submit" class="btn-signup">▶ CREATE MY ACCOUNT</button>
     </form>
+
+    <div class="login-link">
+      Already have an account? <a href="{% url 'login' %}">Log in here</a>
+    </div>
+  </div>
 </div>
 
+<script>
+  // ── show/hide toggle ──────────────────────────────────────────
+  function toggleVis(fieldId, btn) {
+    const inp = document.getElementById(fieldId);
+    if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'hide'; }
+    else { inp.type = 'password'; btn.textContent = 'show'; }
+  }
+
+  // ── strength meter ────────────────────────────────────────────
+  const colors = ['#e74c3c','#e67e22','#f1c40f','#27ae60'];
+  const labels = ['Weak','Fair','Good','Strong'];
+
+  document.getElementById('id_password1').addEventListener('input', function() {
+    const v = this.value;
+    const rules = [
+      { id:'r-len',  ok: v.length >= 8 },
+      { id:'r-up',   ok: /[A-Z]/.test(v) },
+      { id:'r-low',  ok: /[a-z]/.test(v) },
+      { id:'r-num',  ok: /[0-9]/.test(v) },
+      { id:'r-sp',   ok: /[^a-zA-Z0-9]/.test(v) },
+      { id:'r-long', ok: v.length >= 12 },
+    ];
+    rules.forEach(r => document.getElementById(r.id).classList.toggle('ok', r.ok));
+    const core  = rules.slice(0,5).filter(r => r.ok).length;
+    const bonus = rules[5].ok ? 1 : 0;
+    const score = !v.length ? 0 : Math.min(4, Math.floor((core + bonus) / 1.5));
+    ['seg1','seg2','seg3','seg4'].forEach((s,i) => {
+      document.getElementById(s).style.background = i < score ? colors[score-1] : '#ddd';
+    });
+    document.getElementById('strengthLabel').textContent =
+      v.length ? 'strength: ' + (score===0?'very weak':labels[score-1]) : 'strength: —';
+
+    checkMatch();
+  });
+
+  // ── confirm match ─────────────────────────────────────────────
+  document.getElementById('id_password2').addEventListener('input', checkMatch);
+
+  function checkMatch() {
+    const p1  = document.getElementById('id_password1').value;
+    const p2  = document.getElementById('id_password2').value;
+    const msg = document.getElementById('matchMsg');
+    if (!p2) { msg.className = 'match-msg'; return; }
+    if (p1 === p2) { msg.className = 'match-msg ok'; msg.textContent = '✓ passwords match'; }
+    else           { msg.className = 'match-msg error'; msg.textContent = '✕ passwords do not match'; }
+  }
+</script>
 {% endblock %}

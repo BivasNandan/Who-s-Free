@@ -8,18 +8,21 @@ from django.contrib import messages
 from django.contrib.auth.views import redirect_to_login
 from django.db.models import Q
 
-# Create your views here.
+
 def home(request):
     return render(request, template_name='landing_page.html')
+
+
 def create(request):
     return render(request, template_name='users/create.html')
 
-def user_signup(request):#individually signing up
+
+def user_signup(request):
     if request.method == 'POST':
         form = UserSignUpForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.user_type = 'individual'  # Setting user type explicitly
+            user.user_type = 'individual'
             user.save()
             messages.success(request, 'Account Created Successfully!')
             return redirect('login')
@@ -29,12 +32,13 @@ def user_signup(request):#individually signing up
         form = UserSignUpForm()
     return render(request, 'users/user_signup.html', {'form': form})
 
+
 def business_signup(request):
     if request.method == 'POST':
         form = BusinessSignUpForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.user_type = 'business'  # Explicitly set user type
+            user.user_type = 'business'
             user.save()
             messages.success(request, 'Account Created Successfully!')
             return redirect('login')
@@ -44,6 +48,7 @@ def business_signup(request):
         form = BusinessSignUpForm()
     return render(request, 'users/business_signup.html', {'form': form})
 
+
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get("username")
@@ -51,31 +56,34 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            if not user.is_profile_complete:  # Check if the profile is incomplete
+            if not user.is_profile_complete:
                 if user.user_type == 'individual':
                     return redirect('individual_profile_setup')
                 elif user.user_type == 'business':
                     return redirect('business_profile_setup')
             messages.success(request, f"Welcome back, {user.username}!")
-            return redirect('account')  # Redirect to the account page after successful login
+            return redirect('account')
         else:
-            messages.error(request, "Invalid username or password. Please try again.")
-            return redirect('login')
+            # ── FIX: render instead of redirect so error displays ──
+            form = AuthenticationForm(request, data=request.POST)
+            form.add_error(None, "Invalid username or password. Please try again.")
+            return render(request, 'users/login.html', {'form': form})
     else:
         form = AuthenticationForm()
     return render(request, 'users/login.html', {'form': form})
 
+
 def logout_view(request):
-    logout(request)  # Log the user out
+    logout(request)
     messages.success(request, "You have been logged out successfully.")
-    return redirect('login')  # Redirect to the login page after logout
+    return redirect('login')
 
 
 def choose_user_type(request):
     if request.method == "POST":
         user_type = request.POST.get('user_type')
         if user_type in ['individual', 'business']:
-            request.session['user_type'] = user_type  # Store user type in session
+            request.session['user_type'] = user_type
             return redirect('user_signup') if user_type == 'individual' else redirect('business_signup')
         else:
             messages.error(request, "Invalid user type selected.")
@@ -87,34 +95,37 @@ def individual_profile_setup(request):
         form = IndividualAdditionalInfo(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            request.user.is_profile_complete = True  # Mark profile as complete
+            request.user.is_profile_complete = True
             request.user.save()
             messages.success(request, 'Your profile has been updated successfully!')
-            return redirect('account')  # Redirect to the account page
+            return redirect('account')
         else:
             messages.error(request, 'Please correct the errors below.')
     else:
         form = IndividualAdditionalInfo(instance=request.user)
     return render(request, 'users/individual_profile_setup.html', {'form': form})
 
+
 def business_profile_setup(request):
     if request.method == 'POST':
         form = BusinessAdditionalInfo(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            request.user.is_profile_complete = True  # Mark profile as complete
+            request.user.is_profile_complete = True
             request.user.save()
             messages.success(request, 'Your business profile has been updated successfully!')
-            return redirect('account')  # Redirect to the account page
+            return redirect('account')
         else:
             messages.error(request, 'Please correct the errors below.')
     else:
         form = BusinessAdditionalInfo(instance=request.user)
     return render(request, 'users/business_profile_setup.html', {'form': form})
 
+
 @login_required
 def account_view(request):
     return render(request, 'users/account.html', {'user': request.user})
+
 
 @login_required
 def send_friend_request(request, id):
@@ -126,6 +137,7 @@ def send_friend_request(request, id):
         messages.success(request, "Friend request sent.")
     return redirect('account')
 
+
 @login_required
 def accept_friend_request(request, id):
     friend_request = get_object_or_404(Friendship, id=id, to_user=request.user)
@@ -133,6 +145,7 @@ def accept_friend_request(request, id):
     friend_request.save()
     messages.success(request, "Friend request accepted.")
     return redirect('account')
+
 
 @login_required
 def reject_friend_request(request, id):
@@ -145,26 +158,23 @@ def reject_friend_request(request, id):
 
 @login_required
 def friend_list(request):
-    """View to display the user's friends."""
     friends = request.user.friends()
     return render(request, 'users/friend_list.html', {'friends': friends})
 
+
 @login_required
 def friend_requests(request):
-    """View to display the user's received friend requests."""
     friend_requests = request.user.friend_requests()
     return render(request, 'users/friend_requests.html', {'friend_requests': friend_requests})
 
+
 @login_required
 def delete_friend(request, user_id):
-    """Delete a friend relationship."""
     friend = get_object_or_404(CustomUser, id=user_id)
-    # Check if the friendship exists
     friendship = Friendship.objects.filter(
         (Q(from_user=request.user, to_user=friend) | Q(from_user=friend, to_user=request.user)),
         status='accepted'
     ).first()
-
     if friendship:
         friendship.delete()
         messages.success(request, f"You have removed {friend.username} from your friends.")

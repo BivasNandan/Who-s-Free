@@ -1,39 +1,270 @@
-{% extends 'users/account.html'%}
+{% extends 'navbar.html' %}
 {% load static %}
+
+{% block title %}My Friends — Who's Free{% endblock %}
+
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/friends_list.css' %}">
+<style>
+  .friends-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .page-title {
+    font-family: var(--pixel);
+    font-size: 0.75rem;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+  }
+
+  .btn-requests {
+    font-family: var(--doodle);
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 8px 16px;
+    background: var(--white);
+    color: var(--ink);
+    border: var(--border);
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    border-radius: 2px;
+    transition: transform 0.1s, box-shadow 0.1s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-requests:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--ink);
+    color: var(--ink);
+  }
+
+  .req-count {
+    background: var(--danger);
+    color: var(--white);
+    font-family: var(--pixel);
+    font-size: 0.38rem;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    border: 2px solid var(--ink);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.2); }
+  }
+
+  .friends-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.1rem;
+  }
+
+  .friend-card {
+    background: var(--white);
+    border: var(--border);
+    box-shadow: var(--shadow);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.15s, box-shadow 0.15s;
+    animation: cardIn 0.4s ease both;
+  }
+
+  .friend-card:nth-child(1) { animation-delay: 0ms; }
+  .friend-card:nth-child(2) { animation-delay: 60ms; }
+  .friend-card:nth-child(3) { animation-delay: 120ms; }
+  .friend-card:nth-child(4) { animation-delay: 180ms; }
+  .friend-card:nth-child(5) { animation-delay: 240ms; }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .friend-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0 var(--ink);
+  }
+
+  .avatar-section {
+    background: var(--paper);
+    width: 100%;
+    padding: 1.5rem 1rem 1rem;
+    border-bottom: var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+  }
+
+  .friend-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: var(--border);
+    box-shadow: 3px 3px 0 var(--ink);
+    object-fit: cover;
+  }
+
+  .online-dot {
+    position: absolute;
+    top: 1.5rem;
+    right: calc(50% - 42px);
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--success);
+    border: 2px solid var(--white);
+    animation: onlinePulse 2s infinite;
+  }
+
+  @keyframes onlinePulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(45,198,83,0.4); }
+    50%       { box-shadow: 0 0 0 5px rgba(45,198,83,0); }
+  }
+
+  .friend-username {
+    font-family: var(--doodle);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .friend-body {
+    padding: 0.75rem 1rem;
+    width: 100%;
+  }
+
+  .friend-detail {
+    font-family: var(--doodle);
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 3px;
+  }
+
+  .friend-actions {
+    display: flex;
+    gap: 8px;
+    padding: 10px 1rem;
+    border-top: var(--border);
+    width: 100%;
+    justify-content: center;
+    background: var(--paper);
+  }
+
+  .btn-action {
+    font-family: var(--doodle);
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 6px 14px;
+    border: 2px solid var(--ink);
+    border-radius: 2px;
+    text-decoration: none;
+    transition: transform 0.1s, box-shadow 0.1s, background 0.15s;
+    display: inline-block;
+  }
+
+  .btn-action:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+
+  .btn-chat { background: var(--ink); color: var(--white); }
+  .btn-chat:hover { color: var(--white); }
+
+  .btn-delete { background: var(--white); color: var(--danger); border-color: var(--danger); }
+  .btn-delete:hover { background: var(--danger); color: var(--white); box-shadow: 3px 3px 0 #7a1a1a; }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--white);
+    border: var(--border);
+    box-shadow: var(--shadow);
+    border-radius: 4px;
+  }
+
+  .empty-icon  { font-size: 3rem; display: block; margin-bottom: 1rem; }
+  .empty-title { font-family: var(--pixel); font-size: 0.6rem; color: var(--ink); margin-bottom: 0.5rem; }
+  .empty-sub   { font-family: var(--doodle); font-size: 1.1rem; color: #888; }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="friends-container">
-    <h1 class="friends-header">My Friends</h1>
+<div class="friends-page">
 
-    <!-- Friend Requests Button -->
-    {% if friends %}
-        <div class="friends-grid">
-            {% for friend in friends %}
-                <div class="friend-card">
-                    {% if friend.profile_picture %}
-                        <img src="{{ friend.profile_picture.url }}" alt="{{ friend.username }}" class="friend-avatar">
-                    {% else %}
-                        <img src="{% static 'images/default_profile.png' %}" alt="Default Avatar" class="friend-avatar">
-                    {% endif %}
+  <div class="page-header">
+    <h1 class="page-title">MY FRIENDS</h1>
+    <a href="{% url 'friend_requests' %}" class="btn-requests">
+      Friend Requests
+      {% if pending_requests > 0 %}
+        <span class="req-count">{{ pending_requests }}</span>
+      {% endif %}
+    </a>
+  </div>
 
-                    <h3 class="friend-username">{{ friend.username }}</h3>
-                    <p class="friend-detail">Email: {{ friend.email }}</p>
-                    <p class="friend-detail">Birthday: {{ friend.birth_date|date:"F d, Y"|default:"Not specified" }}</p>
+  {% if friends %}
+  <div class="friends-grid">
+    {% for friend in friends %}
+    <div class="friend-card">
+      <div class="avatar-section">
+        {% if friend.profile_picture %}
+          <img src="{{ friend.profile_picture.url }}" alt="{{ friend.username }}" class="friend-avatar">
+        {% else %}
+          <img src="{% static 'images/default_profile.png' %}" alt="avatar" class="friend-avatar">
+        {% endif %}
+        <div class="online-dot"></div>
+        <div class="friend-username">{{ friend.username }}</div>
+      </div>
+      <div class="friend-body">
+        <div class="friend-detail">{{ friend.email }}</div>
+        {% if friend.birth_date %}
+          <div class="friend-detail">🎂 {{ friend.birth_date|date:"F d, Y" }}</div>
+        {% endif %}
+      </div>
+      <div class="friend-actions">
+        <a href="{% url 'chat_room' friend.id %}" class="btn-action btn-chat">💬 Chat</a>
+        <a href="{% url 'delete_friend' friend.id %}" class="btn-action btn-delete">Remove</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
 
-                    <div class="friend-actions">
-                        <a href="{% url 'delete_friend' friend.id %}" class="btn btn-danger">Delete Friend</a>
-                        <a href="{% url 'chat_room' friend.id %}" class="btn btn-primary">Chat</a>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="no-friends">
-            <p>You have no friends yet.</p>
-        </div>
-    {% endif %}
+  {% else %}
+  <div class="empty-state">
+    <span class="empty-icon">🫂</span>
+    <div class="empty-title">NO FRIENDS YET</div>
+    <div class="empty-sub">Go to events and find your people!</div>
+  </div>
+  {% endif %}
+
 </div>
 {% endblock %}
