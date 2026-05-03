@@ -1,79 +1,215 @@
+{% extends 'navbar.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complete Your Profile</title>
-    <link rel="stylesheet" href="{% static 'css/individual_profile_setup.css' %}">
-</head>
-<body>
-    <div class="profile-container">
-        <header>
-            <h1>Complete Your Profile</h1>
-        </header>
-        <main>
-            <form method="post" enctype="multipart/form-data" class="signup-form">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="{{ form.profile_picture.id_for_label }}">Profile Picture:</label>
-                    {{ form.profile_picture }}
-                    {% if form.profile_picture.errors %}
-                        <div class="error">{{ form.profile_picture.errors }}</div>
-                    {% endif %}
-                </div>
-                
-                <div class="form-group">
-                    <label for="{{ form.phone_number.id_for_label }}">Phone Number:</label>
-                    {{ form.phone_number }}
-                    {% if form.phone_number.errors %}
-                    <div class="error">{{ form.phone_number.errors }}</div>
-                    {% endif %}
-                </div>
+{% block title %}Complete Your Profile — Who's Free{% endblock %}
 
-                <div class="form-group">
-                    <label for="{{ form.birth_date.id_for_label }}">Birth Date:</label>
-                    {{ form.birth_date }}
-                    {% if form.birth_date.errors %}
-                        <div class="error">{{ form.birth_date.errors }}</div>
-                    {% endif %}
-                </div>
+{% block extra_css %}
+<style>
+  .setup-page {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    animation: fadeUp 0.4s ease both;
+  }
 
-                <div class="form-group">
-                    <label for="{{ form.bio.id_for_label }}">Bio:</label>
-                    {{ form.bio }}
-                    {% if form.bio.errors %}
-                    <div class="error">{{ form.bio.errors }}</div>
-                    {% endif %}
-                </div>
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
-                <div class="form-group">
-                    <label for="{{ form.interests.id_for_label }}">Interests:</label>
-                    {{ form.interests }}
-                    {% if form.interests.errors %}
-                    <div class="error">{{ form.interests.errors }}</div>
-                    {% endif %}
-                </div>
+  .page-title {
+    font-family: var(--pixel); font-size: 0.7rem;
+    color: var(--ink); letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+  }
 
-                <div class="form-group gender-group">
-                    <label>Gender:</label>
-                    <div class="radio-group">
-                        {% for radio in form.gender %}
-                        <div class="radio-item">
-                            {{ radio.tag }}
-                            <label for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
-                        </div>
-                        {% endfor %}
-                        {% if form.gender.errors %}
-                        <div class="error">{{ form.gender.errors }}</div>
-                        {% endif %}
-                    </div>
-                </div>
+  .page-sub {
+    font-family: var(--doodle); font-size: 1.1rem;
+    color: #888; margin-bottom: 1.5rem;
+  }
 
-                <button type="submit" class="primary-btn">Save</button>
-            </form>
-        </main>
-    </div>
-</body>
-</html>
+  .form-card {
+    background: var(--white); border: var(--border);
+    box-shadow: 6px 6px 0 var(--ink); border-radius: 4px;
+    padding: 2rem;
+  }
+
+  .avatar-upload {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 10px;
+    margin-bottom: 1.5rem; padding-bottom: 1.5rem;
+    border-bottom: 2px dashed #ccc;
+  }
+
+  .avatar-preview {
+    width: 90px; height: 90px; border-radius: 50%;
+    border: var(--border); box-shadow: 3px 3px 0 var(--ink);
+    object-fit: cover; display: none;
+  }
+
+  .avatar-placeholder {
+    width: 90px; height: 90px; border-radius: 50%;
+    border: var(--border); box-shadow: 3px 3px 0 var(--ink);
+    background: var(--paper);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+  }
+
+  .avatar-label {
+    font-family: var(--doodle); font-size: 0.95rem;
+    font-weight: 700; color: var(--ink); cursor: pointer;
+    padding: 6px 14px; border: 2px solid var(--ink);
+    border-radius: 2px; transition: background 0.15s;
+  }
+
+  .avatar-label:hover { background: var(--paper); }
+  .avatar-input { display: none; }
+
+  .form-group { margin-bottom: 1.1rem; }
+
+  .form-group label {
+    display: block; font-family: var(--doodle);
+    font-size: 1rem; font-weight: 700; color: var(--ink); margin-bottom: 5px;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%; padding: 10px 12px;
+    font-family: var(--doodle); font-size: 1rem;
+    border: var(--border); background: var(--paper);
+    color: var(--ink); outline: none; border-radius: 2px;
+    transition: box-shadow 0.15s, background 0.15s;
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    background: var(--white); box-shadow: var(--shadow);
+  }
+
+  .form-group textarea { resize: vertical; min-height: 80px; }
+
+  .radio-group {
+    display: flex; gap: 16px; flex-wrap: wrap; margin-top: 4px;
+  }
+
+  .radio-item {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--doodle); font-size: 1rem; cursor: pointer;
+  }
+
+  .error-msg {
+    font-family: var(--doodle); font-size: 0.9rem;
+    color: var(--danger); padding: 4px 8px;
+    border-left: 3px solid var(--danger);
+    background: #fff0f0; margin-top: 4px;
+  }
+
+  .btn-save {
+    width: 100%; padding: 13px;
+    margin-top: 1.25rem;
+    background: var(--ink); color: var(--white);
+    font-family: var(--pixel); font-size: 0.55rem;
+    letter-spacing: 0.08em; border: var(--border);
+    box-shadow: var(--shadow); cursor: pointer;
+    border-radius: 2px;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+
+  .btn-save:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--ink);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="setup-page">
+  <div class="page-title">COMPLETE YOUR PROFILE</div>
+  <div class="page-sub">tell people a bit about yourself ✏</div>
+
+  <div class="form-card">
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <!-- AVATAR UPLOAD -->
+      <div class="avatar-upload">
+        <img id="avatarPreview" class="avatar-preview" alt="preview">
+        <div class="avatar-placeholder" id="avatarPlaceholder">🙂</div>
+        <label class="avatar-label" for="id_profile_picture">Upload Photo</label>
+        <input type="file" name="profile_picture" id="id_profile_picture"
+               accept="image/*" class="avatar-input">
+        {% if form.profile_picture.errors %}
+          <div class="error-msg">{{ form.profile_picture.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.phone_number.id_for_label }}">Phone Number</label>
+        {{ form.phone_number }}
+        {% if form.phone_number.errors %}
+          <div class="error-msg">{{ form.phone_number.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.birth_date.id_for_label }}">Birth Date</label>
+        {{ form.birth_date }}
+        {% if form.birth_date.errors %}
+          <div class="error-msg">{{ form.birth_date.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.bio.id_for_label }}">Bio</label>
+        {{ form.bio }}
+        {% if form.bio.errors %}
+          <div class="error-msg">{{ form.bio.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.interests.id_for_label }}">Interests</label>
+        {{ form.interests }}
+        {% if form.interests.errors %}
+          <div class="error-msg">{{ form.interests.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label>Gender</label>
+        <div class="radio-group">
+          {% for radio in form.gender %}
+          <div class="radio-item">
+            {{ radio.tag }}
+            <label for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+          </div>
+          {% endfor %}
+        </div>
+        {% if form.gender.errors %}
+          <div class="error-msg">{{ form.gender.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="btn-save">▶ SAVE PROFILE</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.getElementById('id_profile_picture').addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const preview = document.getElementById('avatarPreview');
+        const placeholder = document.getElementById('avatarPlaceholder');
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        placeholder.style.display = 'none';
+      };
+      reader.readAsDataURL(this.files[0]);
+    }
+  });
+</script>
+{% endblock %}

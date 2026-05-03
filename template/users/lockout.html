@@ -1,7 +1,111 @@
 {% extends 'navbar.html' %}
+{% load static %}
+
+{% block title %}Account Locked — Who's Free{% endblock %}
+
+{% block extra_css %}
+<style>
+  .lockout-page {
+    min-height: calc(100vh - 68px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 2rem 1rem;
+  }
+
+  .lockout-card {
+    background: var(--white); border: var(--border);
+    box-shadow: 6px 6px 0 var(--ink); border-radius: 4px;
+    padding: 3rem 2rem; max-width: 420px; width: 100%;
+    text-align: center;
+    animation: slideUp 0.5s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* sad mascot */
+  .lockout-mascot {
+    filter: drop-shadow(4px 4px 0 var(--ink));
+    margin-bottom: 1rem;
+    animation: shake 0.6s ease;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%       { transform: translateX(-8px); }
+    40%       { transform: translateX(8px); }
+    60%       { transform: translateX(-5px); }
+    80%       { transform: translateX(5px); }
+  }
+
+  .lockout-title {
+    font-family: var(--pixel); font-size: 0.7rem;
+    color: var(--danger); letter-spacing: 0.05em; margin-bottom: 1rem;
+  }
+
+  .lockout-msg {
+    font-family: var(--doodle); font-size: 1.1rem;
+    color: #555; line-height: 1.6; margin-bottom: 1rem;
+  }
+
+  .lockout-timer {
+    font-family: var(--pixel); font-size: 0.65rem;
+    color: var(--ink); padding: 12px 16px;
+    border: var(--border); background: var(--paper);
+    border-radius: 2px; margin-bottom: 2rem;
+    display: inline-block;
+  }
+
+  .btn-back {
+    font-family: var(--doodle); font-size: 1rem; font-weight: 700;
+    padding: 10px 24px; background: var(--ink); color: var(--white);
+    border: var(--border); box-shadow: var(--shadow);
+    text-decoration: none; border-radius: 2px;
+    transition: transform 0.1s, box-shadow 0.1s; display: inline-block;
+  }
+
+  .btn-back:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--ink); color: var(--white);
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="text-align:center; padding:4rem;">
-  <h1>Account Locked</h1>
-  <p>Too many failed login attempts. Try again in 1 hour.</p>
+<div class="lockout-page">
+  <div class="lockout-card">
+
+    <!-- sad mascot SVG -->
+    <svg class="lockout-mascot" width="120" height="150" viewBox="0 0 140 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="45" y="90" width="50" height="60" rx="4" fill="white" stroke="#111" stroke-width="3"/>
+      <circle cx="70" cy="72" r="28" fill="white" stroke="#111" stroke-width="3"/>
+      <circle cx="61" cy="70" r="5" fill="#111"/>
+      <circle cx="79" cy="70" r="5" fill="#111"/>
+      <!-- X eyes -->
+      <line x1="58" y1="67" x2="64" y2="73" stroke="#e63946" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="64" y1="67" x2="58" y2="73" stroke="#e63946" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="76" y1="67" x2="82" y2="73" stroke="#e63946" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="82" y1="67" x2="76" y2="73" stroke="#e63946" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- sad mouth -->
+      <path d="M62 84 Q70 79 78 84" stroke="#111" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <line x1="45" y1="105" x2="25" y2="125" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+      <line x1="95" y1="105" x2="115" y2="125" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+      <line x1="58" y1="150" x2="52" y2="172" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+      <line x1="82" y1="150" x2="88" y2="172" stroke="#111" stroke-width="3" stroke-linecap="round"/>
+      <!-- lock icon -->
+      <rect x="58" y="95" width="24" height="18" rx="2" fill="#e63946" stroke="#111" stroke-width="2"/>
+      <path d="M63 95 V90 a7 7 0 0 1 14 0 V95" stroke="#111" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </svg>
+
+    <div class="lockout-title">ACCOUNT LOCKED</div>
+    <div class="lockout-msg">
+      Too many failed login attempts.<br>
+      Your account has been temporarily locked.
+    </div>
+    <div class="lockout-timer">⏱ try again in 1 hour</div>
+    <br>
+    <a href="{% url 'login' %}" class="btn-back">← Back to Login</a>
+  </div>
 </div>
 {% endblock %}

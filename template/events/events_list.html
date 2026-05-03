@@ -185,8 +185,8 @@
     color: #666;
     line-height: 1.5;
     display: -webkit-box;
-    line-clamp: 2;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
@@ -375,11 +375,16 @@
           <span class="interested-pill">{{ event.interested_users.count }}</span>
           interested
         </div>
-        {% if user.is_authenticated and event.user != user %}
-          <a href="{% url 'mark_interested' event.id %}" class="btn-interested">
-            + Interested
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <a href="{% url 'interested_users' event.id %}" class="btn-interested" style="background:var(--paper);">
+            Who's going?
           </a>
-        {% endif %}
+          {% if user.is_authenticated and event.user != user %}
+            <a href="{% url 'mark_interested' event.id %}" class="btn-interested">
+              + Interested
+            </a>
+          {% endif %}
+        </div>
       </div>
 
     </div>

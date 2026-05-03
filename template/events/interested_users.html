@@ -1,40 +1,190 @@
-{% extends 'users/account.html'%}
+{% extends 'navbar.html' %}
 {% load static %}
+
+{% block title %}Interested Users — Who's Free{% endblock %}
+
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/friends_list.css' %}">
+<style>
+  .interested-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-header {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
+  }
+
+  .page-title {
+    font-family: var(--pixel); font-size: 0.65rem;
+    color: var(--ink); letter-spacing: 0.05em; line-height: 1.8;
+  }
+
+  .page-title span {
+    display: block; font-family: var(--doodle);
+    font-size: 1rem; font-weight: 700; letter-spacing: 0;
+    color: #666; margin-top: 2px;
+  }
+
+  .btn-back {
+    font-family: var(--doodle); font-size: 1rem; font-weight: 700;
+    padding: 8px 16px; background: var(--white); color: var(--ink);
+    border: var(--border); box-shadow: var(--shadow);
+    text-decoration: none; border-radius: 2px;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+
+  .btn-back:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--ink); color: var(--ink);
+  }
+
+  .users-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.1rem;
+  }
+
+  .user-card {
+    background: var(--white); border: var(--border);
+    box-shadow: var(--shadow); border-radius: 4px;
+    overflow: hidden; display: flex; flex-direction: column;
+    align-items: center; text-align: center;
+    transition: transform 0.15s, box-shadow 0.15s;
+    animation: cardIn 0.4s ease both;
+  }
+
+  .user-card:nth-child(1) { animation-delay: 0ms; }
+  .user-card:nth-child(2) { animation-delay: 60ms; }
+  .user-card:nth-child(3) { animation-delay: 120ms; }
+  .user-card:nth-child(4) { animation-delay: 180ms; }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .user-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0 var(--ink);
+  }
+
+  .avatar-section {
+    background: var(--paper); width: 100%;
+    padding: 1.5rem 1rem 1rem;
+    border-bottom: var(--border);
+    display: flex; flex-direction: column;
+    align-items: center; gap: 8px;
+  }
+
+  .user-avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    border: var(--border); box-shadow: 3px 3px 0 var(--ink);
+    object-fit: cover;
+  }
+
+  .user-username {
+    font-family: var(--doodle); font-size: 1.1rem;
+    font-weight: 700; color: var(--ink);
+  }
+
+  .user-body { padding: 0.75rem 1rem; width: 100%; }
+
+  .user-email {
+    font-family: var(--doodle); font-size: 0.9rem; color: #666;
+  }
+
+  .user-actions {
+    padding: 10px 1rem; border-top: var(--border);
+    width: 100%; background: var(--paper);
+    display: flex; justify-content: center;
+  }
+
+  .btn-add {
+    font-family: var(--doodle); font-size: 0.9rem; font-weight: 700;
+    padding: 7px 16px; background: var(--ink); color: var(--white);
+    border: 2px solid var(--ink); border-radius: 2px;
+    text-decoration: none;
+    transition: transform 0.1s, box-shadow 0.1s;
+    display: inline-block;
+  }
+
+  .btn-add:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 #333; color: var(--white);
+  }
+
+  .you-badge {
+    font-family: var(--pixel); font-size: 0.38rem;
+    padding: 4px 10px; background: var(--paper);
+    border: 2px solid #ccc; border-radius: 2px;
+    color: #888; letter-spacing: 0.05em;
+  }
+
+  .empty-state {
+    text-align: center; padding: 4rem 2rem;
+    background: var(--white); border: var(--border);
+    box-shadow: var(--shadow); border-radius: 4px;
+  }
+
+  .empty-icon  { font-size: 3rem; display: block; margin-bottom: 1rem; }
+  .empty-title { font-family: var(--pixel); font-size: 0.6rem; color: var(--ink); margin-bottom: 0.5rem; }
+  .empty-sub   { font-family: var(--doodle); font-size: 1.1rem; color: #888; }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="friends-container">
-    <h1 class="friends-header">Users Interested in "{{ event.name }}"</h1>
+<div class="interested-page">
 
-    {% if interested_users %}
-        <div class="friends-grid">
-            {% for user in interested_users %}
-                <div class="friend-card">
-                    {% if user.profile_picture %}
-                        <img src="{{ user.profile_picture.url }}" alt="{{ user.username }}" class="friend-avatar">
-                    {% else %}
-                        <img src="{% static 'images/default_profile.png' %}" alt="Default Avatar" class="friend-avatar">
-                    {% endif %}
-                    
-                    <h3 class="friend-username">{{ user.username }}</h3>
-                    <p class="friend-detail">Email: {{ user.email }}</p>
+  <div class="page-header">
+    <div class="page-title">
+      INTERESTED USERS
+      <span>{{ event.name }}</span>
+    </div>
+    <a href="{% url 'my_created_events' %}" class="btn-back">← My Events</a>
+  </div>
 
-                    {% if user != request.user %}
-                    <div class="friend-actions">
-                        <a href="{% url 'send_friend_request' user.id %}" class="btn btn-primary">Send Friend Request</a>
-                    </div>
-                    {% endif %}
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="no-friends">
-            <p>No users have marked this event as interested yet.</p>
-        </div>
-    {% endif %}
+  {% if interested_users %}
+  <div class="users-grid">
+    {% for u in interested_users %}
+    <div class="user-card">
+      <div class="avatar-section">
+        {% if u.profile_picture %}
+          <img src="{{ u.profile_picture.url }}" alt="{{ u.username }}" class="user-avatar">
+        {% else %}
+          <img src="{% static 'images/default_profile.png' %}" alt="avatar" class="user-avatar">
+        {% endif %}
+        <div class="user-username">{{ u.username }}</div>
+      </div>
+      <div class="user-body">
+        <div class="user-email">{{ u.email }}</div>
+      </div>
+      <div class="user-actions">
+        {% if u != request.user %}
+          <a href="{% url 'send_friend_request' u.id %}" class="btn-add">+ Add Friend</a>
+        {% else %}
+          <span class="you-badge">THAT'S YOU</span>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
 
-    <a href="{% url 'my_created_events' %}" class="btn btn-secondary">Back to My Created Events</a>
+  {% else %}
+  <div class="empty-state">
+    <span class="empty-icon">👥</span>
+    <div class="empty-title">NO ONE YET</div>
+    <div class="empty-sub">No one has marked this event as interested yet.</div>
+  </div>
+  {% endif %}
+
 </div>
 {% endblock %}

@@ -1,17 +1,98 @@
-{% extends 'navbar.html'%}
+{% extends 'navbar.html' %}
+{% load static %}
+
+{% block title %}Delete Event — Who's Free{% endblock %}
+
+{% block extra_css %}
+<style>
+  .delete-page {
+    min-height: calc(100vh - 68px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 2rem 1rem;
+  }
+
+  .delete-card {
+    background: var(--white); border: var(--border);
+    box-shadow: 6px 6px 0 var(--ink); border-radius: 4px;
+    padding: 2.5rem 2rem; max-width: 440px; width: 100%;
+    text-align: center;
+    animation: slideUp 0.4s cubic-bezier(.175,.885,.32,1.275) both;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .delete-icon { font-size: 3rem; display: block; margin-bottom: 1rem; }
+
+  .delete-title {
+    font-family: var(--pixel); font-size: 0.7rem;
+    color: var(--ink); margin-bottom: 1rem; letter-spacing: 0.05em;
+  }
+
+  .delete-msg {
+    font-family: var(--doodle); font-size: 1.1rem;
+    color: #555; margin-bottom: 0.5rem; line-height: 1.5;
+  }
+
+  .event-name-highlight {
+    font-weight: 700; color: var(--ink);
+    border-bottom: 3px solid var(--danger);
+  }
+
+  .delete-warning {
+    font-family: var(--doodle); font-size: 0.95rem;
+    color: var(--danger); margin-bottom: 2rem;
+    padding: 8px 12px; border: 2px solid var(--danger);
+    background: #fff0f0; border-radius: 2px;
+  }
+
+  .delete-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  .btn-confirm {
+    font-family: var(--doodle); font-size: 1rem; font-weight: 700;
+    padding: 10px 20px; background: var(--danger); color: var(--white);
+    border: 2px solid var(--danger); border-radius: 2px; cursor: pointer;
+    box-shadow: 4px 4px 0 #7a1a1a;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+
+  .btn-confirm:hover {
+    transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #7a1a1a;
+  }
+
+  .btn-cancel {
+    font-family: var(--doodle); font-size: 1rem; font-weight: 700;
+    padding: 10px 20px; background: var(--white); color: var(--ink);
+    border: var(--border); border-radius: 2px; text-decoration: none;
+    box-shadow: var(--shadow);
+    transition: transform 0.1s, box-shadow 0.1s; display: inline-block;
+  }
+
+  .btn-cancel:hover {
+    transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--ink); color: var(--ink);
+  }
+</style>
+{% endblock %}
 
 {% block content %}
-<style>
-    /* Paste the CSS here */
-</style>
-
-<div class="delete-confirmation">
-    <h1>Delete Event</h1>
-    <p>Are you sure you want to delete the event "<span class="event-name">{{ event.name }}</span>"?</p>
-    <form method="post">
+<div class="delete-page">
+  <div class="delete-card">
+    <span class="delete-icon">🗑</span>
+    <div class="delete-title">DELETE EVENT</div>
+    <div class="delete-msg">
+      Are you sure you want to delete<br>
+      <span class="event-name-highlight">{{ event.name }}</span>?
+    </div>
+    <div class="delete-warning">This action cannot be undone!</div>
+    <div class="delete-actions">
+      <form method="post">
         {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Delete</button>
-        <a href="{% url 'events_list' %}" class="btn btn-secondary">Cancel</a>
-    </form>
+        <button type="submit" class="btn-confirm">✕ Yes, Delete</button>
+      </form>
+      <a href="{% url 'events_list' %}" class="btn-cancel">← Cancel</a>
+    </div>
+  </div>
 </div>
 {% endblock %}
